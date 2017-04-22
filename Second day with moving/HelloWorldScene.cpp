@@ -103,20 +103,8 @@ bool HelloWorld::init()
 	mn->alignItemsVertically();
 	this->addChild(mn);
 
-	auto eventListener = EventListenerKeyboard::create();
-
-	eventListener->onKeyPressed = CC_CALLBACK_2(HelloWorld::onKeyPressed, this);
-
-	this->_eventDispatcher->addEventListenerWithSceneGraphPriority
-	(eventListener, this);
-
 
     return true;
-}
-
-void HelloWorld::onKeyPressed(EventKeyboard::KeyCode keyCode, Event* event)
-{
-	log("123");
 }
 
 
@@ -182,20 +170,43 @@ bool GameStartPage::init() {
 		CC_CALLBACK_1(GameStartPage::menuItemCallback, this));
 	*/
 	Size screenSize = Director::getInstance()->getVisibleSize();
-	auto qqSprite = Sprite::create("Hydron.png");
+	Sprite* qqSprite = Sprite::create("qq.png");
 
 	qqSprite->setPosition(ccp(screenSize.width / 2, screenSize.height / 2));
 	qqSprite->setScale(0.3);
 	this->addChild(qqSprite);
 
 	auto action = MoveBy::create(3, Point(100, 0));
-	/*
+
 	auto eventListener = EventListenerKeyboard::create();
 
-	eventListener->onKeyPressed = CC_CALLBACK_2(GameStartPage::onKeyPressed, qqSprite);
+	eventListener->onKeyPressed = [](EventKeyboard::KeyCode keyCode, Event* event) {
+		Vec2 loc = event->getCurrentTarget()->getPosition();
+		switch(keyCode) {
+		case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
+		case EventKeyboard::KeyCode::KEY_A:
+			event->getCurrentTarget()->setPosition(loc.x -=10, loc.y);
+			break;
+
+		case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
+		case EventKeyboard::KeyCode::KEY_D:
+			event->getCurrentTarget()->setPosition(loc.x += 10, loc.y);
+			break;
+
+		case EventKeyboard::KeyCode::KEY_UP_ARROW:
+		case EventKeyboard::KeyCode::KEY_W:
+			event->getCurrentTarget()->setPosition(loc.x, loc.y += 10);
+			break;
+
+		case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
+		case EventKeyboard::KeyCode::KEY_S:
+			event->getCurrentTarget()->setPosition(loc.x, loc.y -= 10);
+			break;
+		}
+	};
 
 	this->_eventDispatcher->addEventListenerWithSceneGraphPriority
-	(eventListener, qqSprite);*/
+	(eventListener, qqSprite);
 
 	/*
 	Menu * mn = Menu::create(item1, NULL);
@@ -207,34 +218,6 @@ bool GameStartPage::init() {
 
 	return true;
 }
-void GameStartPage::onKeyPressed(EventKeyboard::KeyCode keyCode, Event* event) {
-	Vec2 loc = event->getCurrentTarget()->getPosition();
-	switch (keyCode) {
-	case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
-	case EventKeyboard::KeyCode::KEY_A:
-		log("123");
-		//while (GameStartPage::isKeyPressed(keyCode)) { log("123"); }
-			//this ->setPosition(loc.x -= 10, loc.y);
-			//event->getCurrentTarget()->setPosition(loc.x -= 10, loc.y);
-		break;
-#if 0
-	case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
-	case EventKeyboard::KeyCode::KEY_D:
-		event->getCurrentTarget()->setPosition(loc.x += 10, loc.y);
-		break;
-
-	case EventKeyboard::KeyCode::KEY_UP_ARROW:
-	case EventKeyboard::KeyCode::KEY_W:
-		event->getCurrentTarget()->setPosition(loc.x, loc.y += 10);
-		break;
-
-	case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
-	case EventKeyboard::KeyCode::KEY_S:
-		event->getCurrentTarget()->setPosition(loc.x, loc.y -= 10);
-		break;
-#endif
-	}
-};
 
 Scene* OptionPage::createNewScene() {
 	auto scene = Scene::create();
@@ -270,10 +253,4 @@ bool OptionPage::init() {
 	return true;
 }
 
-bool GameStartPage::isKeyPressed(EventKeyboard::KeyCode code) {
-	// Check if the key is currently pressed by seeing it it's in the std::map keys
-	// In retrospect, keys is a terrible name for a key/value paried datatype isnt it?
-	if (keys.find(code) != keys.end())
-		return true;
-	return false;
-}
+
