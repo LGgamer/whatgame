@@ -9,7 +9,6 @@ public:
     static cocos2d::Scene* createScene();
 
     virtual bool init();
-	virtual void onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event);
     
     // a selector callback
     void menuCloseCallback(cocos2d::Ref* pSender);
@@ -29,15 +28,14 @@ public:
 
 	virtual bool init();
 
-	void onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event);
 
 	void menuItemCallback(Ref * pSender);
 
-	CREATE_FUNC(GameStartPage);
-
-	bool isKeyPressed(cocos2d::EventKeyboard::KeyCode);
 	static std::map<cocos2d::EventKeyboard::KeyCode,
 		std::chrono::high_resolution_clock::time_point> keys;
+
+	CREATE_FUNC(GameStartPage);
+
 };
 
 class OptionPage : public cocos2d::LayerColor
