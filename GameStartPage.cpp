@@ -150,10 +150,36 @@ bool GameStartPage::init() {
 	button->setPosition(ccp(screenSize.width / 2, screenSize.height / 2));
 	button->setScale(0.3);
 	this->addChild(button);
+	
+	button->setTag(12);
 
 	Menu * mn = Menu::create(item1, NULL);
 	mn->alignItemsVertically();
-	this->addChild(mn);
-
+	//this->addChild(mn);
+	
+	this->scheduleUpdate();
 	return true;
+}
+
+void GameStartPage::update(float delta) {
+    // Register an update function that checks to see if the CTRL key is pressed
+    // and if it is displays how long, otherwise tell the user to press it
+    auto sprite = this->getChildByTag(12);
+    if (isKeyPressed(EventKeyboard::KeyCode::KEY_A)){
+        sprite->setPositionX(sprite->getPositionX() - delta* 1000);
+    }else if (isKeyPressed(EventKeyboard::KeyCode::KEY_D)){
+        sprite->setPositionX(sprite->getPositionX() + delta* 1000);
+    }else if(isKeyPressed(EventKeyboard::KeyCode::KEY_S)){
+        sprite->setPositionY(sprite->getPositionY() - delta* 1000);
+    }else if (isKeyPressed(EventKeyboard::KeyCode::KEY_W)){
+        sprite->setPositionY(sprite->getPositionY() + delta* 1000);
+    }
+}
+
+bool GameStartPage::isKeyPressed(EventKeyboard::KeyCode code) {
+    // Check if the key is currently pressed by seeing it it's in the std::map keys
+    // In retrospect, keys is a terrible name for a key/value paried datatype isnt it?
+    if(keys.find(code) != keys.end())
+        return true;
+    return false;
 }
