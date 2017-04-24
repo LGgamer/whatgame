@@ -183,3 +183,5 @@ bool GameStartPage::isKeyPressed(EventKeyboard::KeyCode code) {
         return true;
     return false;
 }
+
+std::map<cocos2d::EventKeyboard::KeyCode, std::chrono::high_resolution_clock::time_point> GameStartPage::keys;
