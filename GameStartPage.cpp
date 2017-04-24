@@ -22,7 +22,7 @@ bool HelloWorld::init()
 {
     //////////////////////////////
     // 1. super init first
-    if ( !LayerColor::initWithColor(ccc4(0, 0, 0, 255)) )
+    if ( !LayerColor::initWithColor(Color4B(0, 0, 0, 255)) )
     {
         return false;
     }
@@ -74,9 +74,9 @@ bool HelloWorld::init()
     this->addChild(sprite, 0
 	*/
 
-	CCSize screenSize = CCDirector::sharedDirector()->getVisibleSize();
-	CCSprite* player = CCSprite::create("player.png");
-	player->setPosition(ccp(screenSize.width / 2, screenSize.height / 2));
+	auto   screenSize = Director::getInstance()->getWinSize();
+	auto player = Sprite::create("player.png");
+    player ->setPosition(Vec2(screenSize.width / 2, screenSize.height / 2));
 	this->addChild(player);
 
 	MenuItemFont::setFontName("Times New Roman");
@@ -136,29 +136,107 @@ Scene* GameStartPage::createNewScene() {
 }
 
 bool GameStartPage::init() {
-	if (!LayerColor::initWithColor(ccc4(0, 255, 0, 255)))
+	if (!LayerColor::initWithColor(Color4B(255, 255, 255, 255)))
 		return false;
 
 	MenuItemFont::setFontName("Times New Roman");
 	MenuItemFont::setFontSize(86);
-
-	MenuItemFont * item1 = MenuItemFont::create("Back",
+    
+    /*
+    //another menu
+	auto item1 = MenuItemFont::create("Back",
 		CC_CALLBACK_1(GameStartPage::menuItemCallback, this));
+    */
+     //another sprite
+    auto screenSize = Director::getInstance()->getVisibleSize();
+    auto  qqSprite = Sprite::create("HelloWorld.png");
+    
+    qqSprite->setPosition(Vec2(screenSize.width / 2, screenSize.height / 2));
+    qqSprite->setScale(0.3);
+    this->addChild(qqSprite);
+    qqSprite->setTag(12);
+    
+    //Menu * mn = Menu::create(item1,  NULL);
+    //mn->alignItemsVertically();
+    //this->addChild(mn);
 
-	Size screenSize = Director::getInstance()->getVisibleSize();
-	Sprite* button = Sprite::create("qq.png");
-	button->setPosition(ccp(screenSize.width / 2, screenSize.height / 2));
-	button->setScale(0.3);
-	this->addChild(button);
-	
-	button->setTag(12);
+    
+    //create a keyboard listener to move the object.
+    auto eventListener = EventListenerKeyboard::create();
+    
+    /*
+    eventListener->onKeyPressed = [](EventKeyboard::KeyCode keyCode, Event* event) {
+        Vec2 loc = event->getCurrentTarget()->getPosition();
+        
+        switch (keyCode) {
+            case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
+            case EventKeyboard::KeyCode::KEY_A:
+                event->getCurrentTarget()->setPosition(loc.x -=10, loc.y);
+                break;
+                
+            case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
+            case EventKeyboard::KeyCode::KEY_D:
+                event->getCurrentTarget()->setPosition(loc.x += 10, loc.y);
+                break;
+                
+            case EventKeyboard::KeyCode::KEY_UP_ARROW:
+            case EventKeyboard::KeyCode::KEY_W:
+                event->getCurrentTarget()->setPosition(loc.x, loc.y += 10);
+                break;
+                
+            case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
+            case EventKeyboard::KeyCode::KEY_S:
+                event->getCurrentTarget()->setPosition(loc.x, loc.y -= 10);
+                break;
+        };
+    };
+    
+    this->_eventDispatcher->addEventListenerWithSceneGraphPriority
+    (eventListener, qqSprite);
+    */
+    label = cocos2d::Label::createWithSystemFont("Press the CTRL Key","Arial",32);
+    label->setPosition(this->getBoundingBox().getMidX(),this->getBoundingBox().getMidY());
+    //addChild(label);
+    
+    //here is implementation of keyboard scene from game from scratch
+    Director::getInstance()->getOpenGLView()->setIMEKeyboardState(true);
+    eventListener->onKeyPressed = [=](EventKeyboard::KeyCode keyCode, Event* event){
+        // If a key already exists, do nothing as it will already have a time stamp
+        // Otherwise, set's the timestamp to now
+        if(keys.find(keyCode) == keys.end()){
+            keys[keyCode] = std::chrono::high_resolution_clock::now();
+        }
+    };
+    eventListener->onKeyReleased = [=](EventKeyboard::KeyCode keyCode, Event* event){
+        // remove the key.  std::map.erase() doesn't care if the key doesnt exist
+        keys.erase(keyCode);
+    };
+    
+    this->_eventDispatcher->addEventListenerWithSceneGraphPriority(eventListener,this);
+    
+    // Let cocos know we have an update function to be called.
+    // No worries, ill cover this in more detail later on
+    this->scheduleUpdate();
+    return true;
+}
 
-	Menu * mn = Menu::create(item1, NULL);
-	mn->alignItemsVertically();
-	//this->addChild(mn);
-	
-	this->scheduleUpdate();
-	return true;
+bool GameStartPage::isKeyPressed(EventKeyboard::KeyCode code) {
+    // Check if the key is currently pressed by seeing it it's in the std::map keys
+    // In retrospect, keys is a terrible name for a key/value paried datatype isnt it?
+    if(keys.find(code) != keys.end())
+        return true;
+    return false;
+}
+
+double GameStartPage::keyPressedDuration(EventKeyboard::KeyCode code) {
+    if(!isKeyPressed(EventKeyboard::KeyCode::KEY_CTRL))
+        return 0;  // Not pressed, so no duration obviously
+    
+    // Return the amount of time that has elapsed between now and when the user
+    // first started holding down the key in milliseconds
+    // Obviously the start time is the value we hold in our std::map keys
+    return std::chrono::duration_cast<std::chrono::milliseconds>
+    (std::chrono::high_resolution_clock::now() - keys[code]).count();
 }
 
 void GameStartPage::update(float delta) {
@@ -174,14 +252,20 @@ void GameStartPage::update(float delta) {
     }else if (isKeyPressed(EventKeyboard::KeyCode::KEY_W)){
         sprite->setPositionY(sprite->getPositionY() + delta* 1000);
     }
+    /*
+    Node::update(delta);
+    
+    if(isKeyPressed(EventKeyboard::KeyCode::KEY_CTRL)) {
+         std::stringstream ss;
+        ss << "Control key has been pressed for " <<
+        keyPressedDuration(EventKeyboard::KeyCode::KEY_CTRL) << " ms";
+        label->setString(ss.str().c_str());
+     
+    }    else {
+        label->setString("Press the CTRL Key");
+    }
+    */
 }
-
-bool GameStartPage::isKeyPressed(EventKeyboard::KeyCode code) {
-    // Check if the key is currently pressed by seeing it it's in the std::map keys
-    // In retrospect, keys is a terrible name for a key/value paried datatype isnt it?
-    if(keys.find(code) != keys.end())
-        return true;
-    return false;
-}
-
+// Because cocos2d-x requres createScene to be static, we need to make other non-pointer members static
 std::map<cocos2d::EventKeyboard::KeyCode, std::chrono::high_resolution_clock::time_point> GameStartPage::keys;
+
