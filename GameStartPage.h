@@ -27,6 +27,11 @@ public:
 	virtual bool init();
 
 	void menuItemCallback(Ref * pSender);
+	
+	    //here is keyboard scene code from game from scratch.com
+        virtual void update(float delta) override;
+    
+        bool isKeyPressed(cocos2d::EventKeyboard::KeyCode);
 
 	CREATE_FUNC(GameStartPage);
 };
