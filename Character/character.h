@@ -3,10 +3,9 @@
 
 #include<string>
 
-void debug();
 
-class character{
-
+class character
+{
 public:
     character();
     ~character();
@@ -19,15 +18,11 @@ public:
     int get_gold();
     //int level_up();
     int get_speed();
-
-
-    //int shape_size;
-    //virtual void move_way();
-    std::string texture_path;
+    
     double attack_coefficient, defence_coefficient, strength_coefficient, agility_coefficient;
     double experience_coefficient, coins_coefficient, speed_coefficient;
     double health_coefficient, gold_coefficient;
-
+    
 private:
     int basic_health;
     int basic_attack;
@@ -38,5 +33,6 @@ private:
     int gold;
     int level;
     int basic_speed;
-
 };
+
+#endif
