@@ -1,24 +1,22 @@
 #include "character.h"
-#include "../lib/character.h"
 #include <string>
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
 
 character::character(){
-    debug();
+
     basic_health = 10;
     level = 1;
     gold = 0;
     basic_attack = 10;
     basic_defence = 5;
     basic_speed = 100;
-    texture_path = std::string ("HelloCharacter.png");
     attack_coefficient = defence_coefficient = speed_coefficient = health_coefficient = gold_coefficient = 1.0;
 }
 
 character::~character() {
-
+    
 }
 
 int character::get_health(){
@@ -42,7 +40,7 @@ int character::get_agility() {
     return level * agility_coefficient * basic_agility;
 }
 
-int character::get_speed(){
+ int character::get_speed(){
     return level * speed_coefficient * basic_speed;
 }
 
