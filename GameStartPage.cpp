@@ -1,6 +1,6 @@
 #include "HelloWorldScene.h"
 #include "SimpleAudioEngine.h"
-#include "character.h"
+#include "Character.h"
 
 
 USING_NS_CC;
@@ -67,10 +67,11 @@ bool HelloWorld::init()
      this->addChild(sprite, 0
      */
     
-    auto   screenSize = Director::getInstance()->getWinSize();
+    auto screenSize = Director::getInstance()->getWinSize();
     auto player = Sprite::create("HelloWorld.png");
     player->setPosition(Vec2(screenSize.width / 2, screenSize.height /2 ));
     this->addChild(player);
+    
     
     MenuItemFont::setFontName("Times New Roman");
     MenuItemFont::setFontSize(86);
@@ -128,7 +129,7 @@ Scene* GameStartPage::createNewScene() {
     return scene;
 }
 
- bool GameStartPage::init() {
+bool GameStartPage::init() {
     if (!LayerColor::initWithColor(Color4B(255, 255, 255, 255)))
         return false;
     
@@ -155,7 +156,6 @@ Scene* GameStartPage::createNewScene() {
     //this->addChild(weaponSprite);
     //weaponSprite->setTag(2);
     //
-   
     
     
     auto audioengine = CocosDenshion::SimpleAudioEngine::getInstance();
@@ -222,7 +222,7 @@ Scene* GameStartPage::createNewScene() {
     // Let cocos know we have an update function to be called.
     // No worries, ill cover this in more detail later on
     this->scheduleUpdate();
-     
+    
     
     return true;
 }
@@ -252,7 +252,7 @@ void GameStartPage::update(float delta) {
     auto screenSize2 = Director::getInstance()->getVisibleSize();
     auto sprite = this->getChildByTag(1);
     int speed = maincharacter.get_speed();
-//    auto sprite2 = this ->getChildByTag(2);
+    //    auto sprite2 = this ->getChildByTag(2);
     //auto weaponSprite = this->getChildByTag(2);
     if (isKeyPressed(EventKeyboard::KeyCode::KEY_A)
         && sprite->getPositionX()>=0) {
@@ -269,13 +269,80 @@ void GameStartPage::update(float delta) {
         
         sprite->setPositionY(sprite->getPositionY() - delta * speed);
     }
-    if (isKeyPressed(EventKeyboard::KeyCode::KEY_W) 
+    if (isKeyPressed(EventKeyboard::KeyCode::KEY_W)
         && sprite->getPositionY() <= screenSize2.height) {
         
         sprite->setPositionY(sprite->getPositionY() + delta * speed);
     }
     
-    
+    if (isKeyPressed(EventKeyboard::KeyCode::KEY_RIGHT_ARROW)) {
+        
+        auto bullet = Sprite::create("CloseNormal.png");
+        
+        auto startPos = sprite->getPosition() + Point(0, sprite->getContentSize().width / 10);
+        auto endPos = Point(screenSize2.width, sprite->getPositionY());
+        
+        //ennPos is equal to the sum of startPos and bullet distance.
+        
+        auto duration = (endPos.x - startPos.x) / 1000;
+        
+        bullet->setPosition(sprite->getPosition() + Point(sprite->getContentSize().width / 10, 0));
+        
+        this->addChild(bullet);
+        
+        auto fire = MoveTo::create(duration, Point(screenSize2.width-100, sprite->getPositionY()));
+        auto remove = RemoveSelf::create();
+        bullet->runAction(Sequence::create(fire,remove, NULL));
+        
+    }else if (isKeyPressed(EventKeyboard::KeyCode::KEY_LEFT_ARROW)) {
+        
+        auto bullet = Sprite::create("CloseNormal.png");
+        
+        auto startPos = sprite->getPosition() - Point(sprite->getContentSize().width / 10, 0);
+        auto endPos = Point(100, sprite->getPositionY());
+        
+        auto duration = (startPos.x - endPos.x) / 1000;
+        
+        bullet->setPosition(sprite->getPosition() - Point(sprite->getContentSize().width / 10, 0));
+        
+        this->addChild(bullet);
+        
+        auto fire = MoveTo::create(duration, Point(0+100, sprite->getPositionY()));
+        auto remove = RemoveSelf::create();
+        bullet->runAction(Sequence::create(fire,remove, NULL));
+    }else if (isKeyPressed(EventKeyboard::KeyCode::KEY_UP_ARROW)) {
+        
+        auto bullet = Sprite::create("CloseNormal.png");
+        
+        auto startPos = sprite->getPosition() + Point(0, sprite->getContentSize().height / 10);
+        auto endPos = Point(sprite->getPositionX(), screenSize2.height);
+        
+        auto duration = (endPos.y - startPos.y) / 1000;
+        
+        bullet->setPosition(sprite->getPosition() - Point(0, sprite->getContentSize().height / 10));
+        
+        this->addChild(bullet);
+        
+        auto fire = MoveTo::create(duration, Point(sprite->getPositionX(), screenSize2.height - 100));
+        auto remove = RemoveSelf::create();
+        bullet->runAction(Sequence::create(fire,remove, NULL));
+    }else if (isKeyPressed(EventKeyboard::KeyCode::KEY_DOWN_ARROW)) {
+        
+        auto bullet = Sprite::create("CloseNormal.png");
+        
+        auto startPos = sprite->getPosition() - Point(0, sprite->getContentSize().height / 10);
+        auto endPos = Point(sprite->getPositionX(), 100);
+        
+        auto duration = (startPos.y - endPos.y) / 1000;
+        
+        bullet->setPosition(sprite->getPosition() + Point(0, sprite->getContentSize().height / 10));
+        
+        this->addChild(bullet);
+        
+        auto fire = MoveTo::create(duration, Point(sprite->getPositionX(), 0 + 100));
+        auto remove = RemoveSelf::create();
+        bullet->runAction(Sequence::create(fire,remove, NULL));
+    }
     /*
      Node::update(delta);
      if(isKeyPressed(EventKeyboard::KeyCode::KEY_CTRL)) {
