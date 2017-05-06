@@ -160,6 +160,8 @@ void GameStartPage::keyEvent(float delta) {
 		{
 			auto hittedSprite = this->getChildByName(hitted.name);
 			log("no");
+			auto remove = RemoveSelf::create();
+			hittedSprite->runAction(remove);
 			auto monsterP = hittedSprite->getPosition();
 			auto monsterS = hittedSprite->getContentSize();
 			int mwith = hittedSprite->getScale()*monsterS.width;
@@ -177,6 +179,7 @@ void GameStartPage::keyEvent(float delta) {
 				}
 				else { ; }
 		}
+
 		else
 			sprite->setPositionX(cp.x - delta* speed);
 	}
@@ -271,8 +274,8 @@ void GameStartPage::keyEvent(float delta) {
 
 		auto bullet = Sprite::create("CloseNormal.png");
 
-		auto startPos = sprite->getPosition() + Point(0, sprite->getContentSize().width / 10);
-		auto endPos = Point(screenSize2.width, sprite->getPositionY());
+		auto startPos = sprite->getPosition() + Point(sprite->getContentSize().width / 10, 0);
+		auto endPos = startPos + Point(1000, 0);
 
 		//ennPos is equal to the sum of startPos and bullet distance.
 
@@ -282,7 +285,8 @@ void GameStartPage::keyEvent(float delta) {
 
 		this->addChild(bullet);
 
-		auto fire = MoveTo::create(duration, Point(screenSize2.width - 100, sprite->getPositionY()));
+		auto fire = MoveTo::create(duration, endPos);
+
 		auto remove = RemoveSelf::create();
 		bullet->runAction(Sequence::create(fire, remove, NULL));
 
@@ -292,7 +296,7 @@ void GameStartPage::keyEvent(float delta) {
 		auto bullet = Sprite::create("CloseNormal.png");
 
 		auto startPos = sprite->getPosition() - Point(sprite->getContentSize().width / 10, 0);
-		auto endPos = Point(100, sprite->getPositionY());
+		auto endPos = startPos + Point(-1000, 0);
 
 		auto duration = (startPos.x - endPos.x) / 1000;
 
@@ -300,7 +304,7 @@ void GameStartPage::keyEvent(float delta) {
 
 		this->addChild(bullet);
 
-		auto fire = MoveTo::create(duration, Point(0 + 100, sprite->getPositionY()));
+		auto fire = MoveTo::create(duration, endPos);
 		auto remove = RemoveSelf::create();
 		bullet->runAction(Sequence::create(fire, remove, NULL));
 	}
@@ -309,7 +313,7 @@ void GameStartPage::keyEvent(float delta) {
 		auto bullet = Sprite::create("CloseNormal.png");
 
 		auto startPos = sprite->getPosition() + Point(0, sprite->getContentSize().height / 10);
-		auto endPos = Point(sprite->getPositionX(), screenSize2.height);
+		auto endPos = startPos + Point(0, 1000);
 
 		auto duration = (endPos.y - startPos.y) / 1000;
 
@@ -317,7 +321,7 @@ void GameStartPage::keyEvent(float delta) {
 
 		this->addChild(bullet);
 
-		auto fire = MoveTo::create(duration, Point(sprite->getPositionX(), screenSize2.height - 100));
+		auto fire = MoveTo::create(duration,endPos);
 		auto remove = RemoveSelf::create();
 		bullet->runAction(Sequence::create(fire, remove, NULL));
 	}
@@ -326,7 +330,7 @@ void GameStartPage::keyEvent(float delta) {
 		auto bullet = Sprite::create("CloseNormal.png");
 
 		auto startPos = sprite->getPosition() - Point(0, sprite->getContentSize().height / 10);
-		auto endPos = Point(sprite->getPositionX(), 100);
+		auto endPos = startPos + Point(0, -1000);
 
 		auto duration = (startPos.y - endPos.y) / 1000;
 
@@ -334,7 +338,7 @@ void GameStartPage::keyEvent(float delta) {
 
 		this->addChild(bullet);
 
-		auto fire = MoveTo::create(duration, Point(sprite->getPositionX(), 0 + 100));
+		auto fire = MoveTo::create(duration, endPos);
 		auto remove = RemoveSelf::create();
 		bullet->runAction(Sequence::create(fire, remove, NULL));
 	}
