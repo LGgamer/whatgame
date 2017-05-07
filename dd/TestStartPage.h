@@ -22,6 +22,8 @@ public:
 	void updateCL();
 	//检查玩家和CL中的碰撞
 	PandS cheakCL(float x1, float y1, int w1, int h1);
+	//移动地图元素
+	void GameStartPage::moveCL(float dx, float dy);
 
 	static cocos2d::Scene* createNewScene();
 
