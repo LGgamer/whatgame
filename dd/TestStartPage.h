@@ -3,12 +3,16 @@
 
 #include "cocos2d.h"
 #include "CollisionList.h"
+#include "character.h"
 //#include "SceneManager.h"
 
-class GameStartPage : public cocos2d::LayerColor
+class GameStartPage : public cocos2d::Layer
 {
 public:
 	CollisonList cl;
+	cocos2d::Vec2 screenO;
+	character maincharacter;
+	//auto bg;
 //	Sprite* sprite;
 public:
 	//每一个场景关卡都会有一个碰撞列表
@@ -29,8 +33,10 @@ public:
 	bool isKeyPressed(cocos2d::EventKeyboard::KeyCode);
 	double keyPressedDuration(cocos2d::EventKeyboard::KeyCode);
 
-	//GSceneManager* sceneManager;
+
 	void keyEvent(float delta);
+
+	void fire(float dt);
 
 private:
 	static std::map<cocos2d::EventKeyboard::KeyCode,

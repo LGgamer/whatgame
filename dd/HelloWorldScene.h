@@ -6,8 +6,10 @@
 /*CC_SYNTHESIZE_RETAIN(coco2d::CCTMXTiledMap*, _tilemap, Tilemap);
 CC_SYNTHESIZE_RETAIN(coco2d::CCTMXLayer*, _background, Background);
 */
-class HelloWorld : public cocos2d::LayerColor
+class HelloWorld : public cocos2d::Layer//Color
 {
+public:
+	cocos2d::Vec2 screenO;
 public:
     static cocos2d::Scene* createScene();
 

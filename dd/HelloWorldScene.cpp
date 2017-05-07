@@ -3,6 +3,7 @@
 #include "SimpleAudioEngine.h"
 #include "CollisionTest.h"
 #include "TestStartPage.h"
+#include "PlayerLayer.h"
 
 USING_NS_CC;
 
@@ -20,7 +21,6 @@ Scene* HelloWorld::createScene()
     
     // 'layer' is an autorelease object
     auto layer = HelloWorld::create();
-
     // add layer as a child to scene
     scene->addChild(layer);
 
@@ -31,16 +31,18 @@ Scene* HelloWorld::createScene()
 // on "init" you need to initialize your instance
 bool HelloWorld::init()
 {
-		if (!LayerColor::initWithColor(ccc4(0,255,255,255)))
+		if (!Layer::init())//WithColor(ccc4(0,255,255,255)))
 		{
 			return false;
 		}
-		
+		screenO = Director::getInstance()->getVisibleOrigin();
 #if 0
-		std::string file = "04.tmx";
-		auto str = String::createWithContentsOfFile(FileUtils::getInstance()->fullPathForFilename(file.c_str()).c_str());
-		_tileMap = TMXTiledMap::createWithXML(str->getCString(), "");
-		_background = _tileMap->layerNamed("background");
+		//std::string file = "Map.tmx";
+		//auto str = String::createWithContentsOfFile(FileUtils::getInstance()->fullPathForFilename(file.c_str()).c_str());
+		_tileMap = TMXTiledMap::create("04.tmx");
+		//_tileMap->setAnchorPoint(0);
+		//_tileMap->setPosition(Vec2(40,40));
+		//_background = _tileMap->layerNamed("background");
 
 		addChild(_tileMap, -1);
 #endif
@@ -70,9 +72,10 @@ bool HelloWorld::init()
 		player->setPosition(ccp(0 + 40, screensize.height / 2));
 		player->setTag(1);
 
-		auto bg = Sprite::create("testBG.png");
-		bg->setPosition(Vec2(screensize.width / 2, screensize.height / 2));
-		this->addChild(bg);
+		auto bg = Sprite::create("Map.png");
+		bg->setAnchorPoint(Vec2(0,0));
+		bg->setPosition(Vec2(0,0));
+		this->addChild(bg,-1);
 
 		this->addChild(player);
 
@@ -125,6 +128,15 @@ bool HelloWorld::init()
 
 
 #endif
+#if 0
+		auto playerl = PlayerLayer::create();
+		this->addChild(playerl);
+		playerl->setName("playerl");
+		auto sprite = playerl->getChildByTag(10);
+		//sprite->setTag(1);
+
+		//sprite->runAction(MoveTo::create(10, Vec2(500, 0)));
+#endif
 }
 
 bool HelloWorld::isHold(EventKeyboard::KeyCode code)
@@ -142,7 +154,13 @@ bool HelloWorld::isHold(EventKeyboard::KeyCode code)
 
 void HelloWorld::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *event)
 {
+
+	auto screensize = Director::getInstance()->getVisibleSize();
+	
+
 	auto player = this->getChildByTag(1);
+	//auto player = this->getChildByName("playerl")->getChildByTag(10);
+	
 	auto cp = player->getPosition();
 	auto testMonster = this->getChildByName("vampire");
 
@@ -159,7 +177,7 @@ void HelloWorld::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *event)
 	log("mwidth %d", mwith);
 	log("mheight %d", mheig);
 
-		const float d = 10;
+		const float d = 100;
 		hold = 1;
 		switch (keyCode)
 		{
@@ -167,11 +185,19 @@ void HelloWorld::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *event)
 			log("up");
 			//while (HelloWorld::isHold(EventKeyboard::KeyCode::KEY_UP_ARROW))
 			{
+				screensize = Director::getInstance()->getVisibleSize();
+
+				
+				//screenp = Director::getInstance()->convertToGL(screenp);
 				cp = player->getPosition();
 				log("cp x %f", cp.x);
 				log("cp y %f", cp.y);
-				log("cm x %f", monsterP.x);
-				log("cm y %f", monsterP.y);
+				log("bo x %f", this->getPosition().x);
+				log("bo y %f", this->getPosition().y);
+
+				
+
+
 				if (CollisionTest::isCollision(cp.x, cp.y + d, pwith, pheig, monsterP.x, monsterP.y, mwith,mheig))
 				{
 					log("no");
@@ -197,14 +223,25 @@ void HelloWorld::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *event)
 				}
 				else
 				{
-					log("yes");
-					player->setPosition(Vec2(cp.x, cp.y + d));
+					if (cp.y - screenO.y < screensize.height / 4 * 3)
+					{
+						player->setPosition(Vec2(cp.x, cp.y + d));
+						log("yes");
+					}
+					else
+					{
+						player->setPosition(Vec2(cp.x, cp.y + d));
+						this->setPosition(Vec2(this->getPosition().x, this->getPosition().y - d));
+						screenO.y += d;
+					}
 				}
 			}
 			break;
 		case cocos2d::EventKeyboard::KeyCode::KEY_DOWN_ARROW:
 			log("down");
 			cp = player->getPosition();
+			screensize = Director::getInstance()->getVisibleSize();
+			//screenp = Director::getInstance()->getVisibleOrigin();
 			if (CollisionTest::isCollision(cp.x, cp.y - d, pwith, pheig, monsterP.x, monsterP.y, mwith, mheig))
 			{
 				log("no");
@@ -221,10 +258,24 @@ void HelloWorld::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *event)
 					else { ; }
 			}
 			else
-				player->setPosition(Vec2(cp.x, cp.y - d));
+			{
+				if (cp.y - screenO.y > screensize.height / 4 )
+				{
+					player->setPosition(Vec2(cp.x, cp.y - d));
+					log("yes");
+				}
+				else
+				{
+					player->setPosition(Vec2(cp.x, cp.y - d));
+					this->setPosition(Vec2(this->getPosition().x, this->getPosition().y + d));
+					screenO.y -= d;
+				}
+			}
 			break;
 		case cocos2d::EventKeyboard::KeyCode::KEY_LEFT_ARROW:
 			log("down");
+			screensize = Director::getInstance()->getVisibleSize();
+			//screenp = Director::getInstance()->getVisibleOrigin();
 			cp = player->getPosition();
 			if (CollisionTest::isCollision(cp.x-d, cp.y, pwith, pheig, monsterP.x, monsterP.y, mwith, mheig))
 			{
@@ -242,10 +293,24 @@ void HelloWorld::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *event)
 						else { ; }
 			}
 			else
-				player->setPosition(Vec2(cp.x - d, cp.y));
+			{
+				if (cp.x - screenO.x > screensize.width/ 4)
+				{
+					player->setPosition(Vec2(cp.x -d, cp.y));
+					log("yes");
+				}
+				else
+				{
+					player->setPosition(Vec2(cp.x - d, cp.y));
+					this->setPosition(Vec2(this->getPosition().x + d, this->getPosition().y));
+					screenO.x -= d;
+				}
+			}
 			break;
 		case cocos2d::EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
 			log("down");
+			screensize = Director::getInstance()->getVisibleSize();
+			//screenp = Director::getInstance()->getVisibleOrigin();
 			cp = player->getPosition();
 			if (CollisionTest::isCollision(cp.x + d, cp.y, pwith, pheig, monsterP.x, monsterP.y, mwith, mheig))
 			{
@@ -263,7 +328,19 @@ void HelloWorld::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *event)
 					else { ; }
 			}
 			else
-				player->setPosition(Vec2(cp.x + d, cp.y));
+			{
+				if (cp.x - screenO.x < screensize.width / 4*3)
+				{
+					player->setPosition(Vec2(cp.x+d, cp.y));
+					log("yes");
+				}
+				else
+				{
+					player->setPosition(Vec2(cp.x + d, cp.y));
+					this->setPosition(Vec2(this->getPosition().x - d, this->getPosition().y));
+					screenO.x += d;
+				}
+			}
 			break;
 	
 
@@ -422,232 +499,4 @@ void HelloWorld::setViewPointCenter(Point position) {
 std::map<cocos2d::EventKeyboard::KeyCode, std::chrono::high_resolution_clock::time_point> HelloWorld::keys;
 #endif
 
-#if 0
-#include "HelloWorldScene.h"
 
-USING_NS_CC;
-
-Scene* HelloWorld::createScene()
-{
-	// 'scene' is an autorelease object
-	auto scene = Scene::create();
-
-	// 'layer' is an autorelease object
-	auto layer = HelloWorld::create();
-
-	// add layer as a child to scene
-	scene->addChild(layer);
-
-	// return the scene
-	return scene;
-}
-
-// on "init" you need to initialize your instance
-bool HelloWorld::init()
-{
-	//////////////////////////////
-	// 1. super init first
-	if (!LayerColor::initWithColor(Color4B(0, 0, 0, 255)))
-	{
-		return false;
-	}
-
-
-	auto   screenSize = Director::getInstance()->getWinSize();
-	auto player = Sprite::create("testball.png");
-	player->setPosition(Vec2(screenSize.width / 2, screenSize.height / 2));
-	this->addChild(player);
-
-	MenuItemFont::setFontName("Times New Roman");
-	MenuItemFont::setFontSize(86);
-
-	MenuItemFont * item1 = MenuItemFont::create("Start",
-		CC_CALLBACK_1(HelloWorld::menuItem1Callback, this));
-
-	/*
-	MenuItemAtlasFont * item2 = MenuItemAtlasFont::create("Help",
-	"weixin.png", 48, 65, ' ',
-	CC_CALLBACK_1(HelloWorld::menuItem2Callback, this));
-	item2->setPosition(ccp(screenSize.width / 2, screenSize.height / 2 - 10));
-	this->addChild(item2);
-	*/
-
-	Menu * mn = Menu::create(item1, NULL);
-	mn->alignItemsVertically();
-	this->addChild(mn);
-
-
-	return true;
-}
-
-
-void HelloWorld::menuCloseCallback(Ref* pSender)
-{
-	Director::getInstance()->end();
-
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-	exit(0);
-#endif
-}
-
-void HelloWorld::menuItem1Callback(Ref * pSender) {
-
-	auto sc = GameStartPage::createNewScene();
-	Director::getInstance()->pushScene(sc);
-
-}
-
-void GameStartPage::menuItemCallback(Ref * pSender) {
-
-	auto sc = HelloWorld::createScene();
-	Director::getInstance()->pushScene(sc);
-}
-
-
-Scene* GameStartPage::createNewScene() {
-	auto scene = Scene::create();
-
-	auto layer = GameStartPage::create();
-
-	scene->addChild(layer);
-
-	return scene;
-}
-
-bool GameStartPage::init() {
-	if (!LayerColor::initWithColor(Color4B(255, 255, 255, 255)))
-		return false;
-
-	MenuItemFont::setFontName("Times New Roman");
-	MenuItemFont::setFontSize(86);
-
-	/*
-	//another menu
-	auto item1 = MenuItemFont::create("Back",
-	CC_CALLBACK_1(GameStartPage::menuItemCallback, this));
-	*/
-	//another sprite
-	auto screenSize = Director::getInstance()->getVisibleSize();
-	auto  qqSprite = Sprite::create("HelloWorld.png");
-
-	qqSprite->setPosition(Vec2(screenSize.width / 2, screenSize.height / 2));
-	qqSprite->setScale(0.3);
-	this->addChild(qqSprite);
-	qqSprite->setTag(12);
-
-	//Menu * mn = Menu::create(item1,  NULL);
-	//mn->alignItemsVertically();
-	//this->addChild(mn);
-
-
-	//create a keyboard listener to move the object.
-	auto eventListener = EventListenerKeyboard::create();
-
-	/*
-	eventListener->onKeyPressed = [](EventKeyboard::KeyCode keyCode, Event* event) {
-	Vec2 loc = event->getCurrentTarget()->getPosition();
-
-	switch (keyCode) {
-	case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
-	case EventKeyboard::KeyCode::KEY_A:
-	event->getCurrentTarget()->setPosition(loc.x -=10, loc.y);
-	break;
-
-	case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
-	case EventKeyboard::KeyCode::KEY_D:
-	event->getCurrentTarget()->setPosition(loc.x += 10, loc.y);
-	break;
-
-	case EventKeyboard::KeyCode::KEY_UP_ARROW:
-	case EventKeyboard::KeyCode::KEY_W:
-	event->getCurrentTarget()->setPosition(loc.x, loc.y += 10);
-	break;
-
-	case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
-	case EventKeyboard::KeyCode::KEY_S:
-	event->getCurrentTarget()->setPosition(loc.x, loc.y -= 10);
-	break;
-	};
-	};
-
-	this->_eventDispatcher->addEventListenerWithSceneGraphPriority
-	(eventListener, qqSprite);
-	*/
-	label = cocos2d::Label::createWithSystemFont("Press the CTRL Key", "Arial", 32);
-	label->setPosition(this->getBoundingBox().getMidX(), this->getBoundingBox().getMidY());
-	//addChild(label);
-
-	//here is implementation of keyboard scene from game from scratch
-	Director::getInstance()->getOpenGLView()->setIMEKeyboardState(true);
-	eventListener->onKeyPressed = [=](EventKeyboard::KeyCode keyCode, Event* event) {
-		// If a key already exists, do nothing as it will already have a time stamp
-		// Otherwise, set's the timestamp to now
-		if (keys.find(keyCode) == keys.end()) {
-			keys[keyCode] = std::chrono::high_resolution_clock::now();
-		}
-	};
-	eventListener->onKeyReleased = [=](EventKeyboard::KeyCode keyCode, Event* event) {
-		// remove the key.  std::map.erase() doesn't care if the key doesnt exist
-		keys.erase(keyCode);
-	};
-
-	this->_eventDispatcher->addEventListenerWithSceneGraphPriority(eventListener, this);
-
-	// Let cocos know we have an update function to be called.
-	// No worries, ill cover this in more detail later on
-	this->scheduleUpdate();
-	return true;
-}
-
-bool GameStartPage::isKeyPressed(EventKeyboard::KeyCode code) {
-	// Check if the key is currently pressed by seeing it it's in the std::map keys
-	// In retrospect, keys is a terrible name for a key/value paried datatype isnt it?
-	if (keys.find(code) != keys.end())
-		return true;
-	return false;
-}
-
-double GameStartPage::keyPressedDuration(EventKeyboard::KeyCode code) {
-	if (!isKeyPressed(EventKeyboard::KeyCode::KEY_CTRL))
-		return 0;  // Not pressed, so no duration obviously
-
-				   // Return the amount of time that has elapsed between now and when the user
-				   // first started holding down the key in milliseconds
-				   // Obviously the start time is the value we hold in our std::map keys
-	return std::chrono::duration_cast<std::chrono::milliseconds>
-		(std::chrono::high_resolution_clock::now() - keys[code]).count();
-}
-
-void GameStartPage::update(float delta) {
-	// Register an update function that checks to see if the CTRL key is pressed
-	// and if it is displays how long, otherwise tell the user to press it
-	auto sprite = this->getChildByTag(12);
-	if (isKeyPressed(EventKeyboard::KeyCode::KEY_A)) {
-		sprite->setPositionX(sprite->getPositionX() - delta * 1000);
-	}
-	else if (isKeyPressed(EventKeyboard::KeyCode::KEY_D)) {
-		sprite->setPositionX(sprite->getPositionX() + delta * 1000);
-	}
-	else if (isKeyPressed(EventKeyboard::KeyCode::KEY_S)) {
-		sprite->setPositionY(sprite->getPositionY() - delta * 1000);
-	}
-	else if (isKeyPressed(EventKeyboard::KeyCode::KEY_W)) {
-		sprite->setPositionY(sprite->getPositionY() + delta * 1000);
-	}
-	/*
-	Node::update(delta);
-
-	if(isKeyPressed(EventKeyboard::KeyCode::KEY_CTRL)) {
-	std::stringstream ss;
-	ss << "Control key has been pressed for " <<
-	keyPressedDuration(EventKeyboard::KeyCode::KEY_CTRL) << " ms";
-	label->setString(ss.str().c_str());
-
-	}    else {
-	label->setString("Press the CTRL Key");
-	}
-	*/
-}
-// Because cocos2d-x requres createScene to be static, we need to make other non-pointer members static
-std::map<cocos2d::EventKeyboard::KeyCode, std::chrono::high_resolution_clock::time_point> GameStartPage::keys;
-#endif
