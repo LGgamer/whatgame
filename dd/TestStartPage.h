@@ -10,13 +10,14 @@ class GameStartPage : public cocos2d::Layer
 {
 public:
 	CollisonList cl;
-	cocos2d::Vec2 screenO;
+	cocos2d::Point screenO;
 	character maincharacter;
 	//auto bg;
 //	Sprite* sprite;
 public:
 	//每一个场景关卡都会有一个碰撞列表
 	void initCL();
+	
 	//更新怪物碰撞列表
 	void updateCL();
 	//检查玩家和CL中的碰撞
