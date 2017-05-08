@@ -6,12 +6,14 @@
 
 character::character() {
 
-	basic_health = 10;
+	live = true;
+
+	basic_health = 100;
 	level = 1;
 	gold = 0;
 	basic_attack = 10;
 	basic_defence = 5;
-	basic_speed = 500;
+	basic_speed = 100;
 	attack_coefficient = defence_coefficient = speed_coefficient = health_coefficient = gold_coefficient = 1.0;
 }
 
@@ -19,8 +21,12 @@ character::~character() {
 
 }
 
-int character::get_health() {
-	return level * health_coefficient * basic_health;
+int character::get_max_health() {
+	return level * health_coefficient * 100;
+}
+
+int character::get_current_health() {
+	return basic_health;
 }
 
 int character::get_attack() {
@@ -50,4 +56,23 @@ int character::get_experience() {
 
 int character::get_gold() {
 	return gold;
+}
+
+void character::HpDown(int point) {
+	if (basic_health >= point) {
+		basic_health = basic_health - point;
+	}
+	else {
+		basic_health = 0;
+		live = false;
+	}
+}
+
+bool character::stillalive() {
+	if (live == true) {
+		return true;
+	}
+	else {
+		return false;
+	}
 }

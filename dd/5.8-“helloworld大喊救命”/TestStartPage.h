@@ -34,7 +34,10 @@ public:
 	//检查玩家和CL中的碰撞
 	PandS cheakCL(float x1, float y1, int w1, int h1);
 	//移动地图元素
-	void GameStartPage::moveCL(float dx, float dy);
+	void moveCL(float dx, float dy);
+
+	//更新血条
+	void updateHP();
 
 	static cocos2d::Scene* createNewScene();
 
@@ -51,6 +54,8 @@ public:
 	void keyEvent(float delta);
 
 	void fire(float dt);
+
+	int BulletNumber;
 
 private:
 	static std::map<cocos2d::EventKeyboard::KeyCode,
