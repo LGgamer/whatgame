@@ -111,7 +111,7 @@ double GameStartPage::keyPressedDuration(EventKeyboard::KeyCode code) {
 void GameStartPage::update(float delta) {
 
 
-
+	killMonsters();
     // Register an update function that checks to see if the CTRL key is pressed
     // and if it is displays how long, otherwise tell the user to press it
 	keyEvent(delta);
@@ -119,6 +119,42 @@ void GameStartPage::update(float delta) {
 }
 // Because cocos2d-x requres createScene to be static, we need to make other non-pointer members static
 std::map<cocos2d::EventKeyboard::KeyCode, std::chrono::high_resolution_clock::time_point> GameStartPage::keys;
+
+void GameStartPage::killMonsters() {
+	Vector<Node* >  childList = this->getChildren();
+	Vector<Node*> bulletsList;
+	for (Node* i : childList)
+	{
+		//if it is a bullet
+		if (i->getTag() == 5) {
+			bulletsList.pushBack(i);
+		}
+	}
+	
+	for (Node* i : bulletsList)
+	{
+		auto bulletS = i->getContentSize();
+		int pwith = i->getScale()*bulletS.width;
+		int pheig = bulletS.height*i->getScale();
+		auto cp = i->getPosition();
+		auto remove1 = RemoveSelf::create();
+		updateCL();
+		PandS hitted = cheakCL(cp.x, cp.y, pwith, pheig);
+		if (hitted.height > 0 && hitted.width > 0)//, monsterP.x, monsterP.y, mwith, mheig))
+		{
+			auto hittedSprite = this->getChildByName(hitted.name);
+			if (hittedSprite->getTag() == 2)
+			{
+				auto monster = static_cast<Monster*> (this->getChildByName(hitted.name));
+				monster->health -= 50;
+				if (monster->getHealth() <= 0)
+					monster->runAction(remove1);
+			}
+			auto remove2 = RemoveSelf::create();
+			i->runAction(remove2);
+		}
+	}
+}
 
 void GameStartPage::keyEvent(float delta) {
 	auto screenSize2 = Director::getInstance()->getVisibleSize();
