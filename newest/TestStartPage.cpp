@@ -1,78 +1,38 @@
 #include "TestStartPage.h"
 #include "SimpleAudioEngine.h"
-#include "character.h"
+#include "Character.h"
 #include "CollisionTest.h"
-#include "PlayerLayer.h"
-#include "BackgroundLayer.h"
 
 USING_NS_CC;
 
-//void GameStartPage::menuItemCallback(Ref * pSender) {
-//    
-//    auto sc = HelloWorld::createScene();
-//    Director::getInstance()->pushScene(sc);
-//}
 
+character maincharacter;
 
 Scene* GameStartPage::createNewScene() {
-	auto scene = Scene::create();
-
-	//auto bg = GameStartPage::create();
-
-	auto layer = GameStartPage::create();
-
-	//scene->addChild(bg,0);
-	scene->addChild(layer, 1);
-
-	return scene;
+    auto scene = Scene::create();
+    
+    auto layer = GameStartPage::create();
+    
+    scene->addChild(layer);
+    
+    return scene;
 }
 
 bool GameStartPage::init() {
-    if (!Layer::init())
+    if (!LayerColor::initWithColor(Color4B(255, 255, 255, 255)))
         return false;
-
-	//character maincharacter;
-
-
+    
     MenuItemFont::setFontName("Times New Roman");
     MenuItemFont::setFontSize(86);
 
-	auto screenSize = Director::getInstance()->getVisibleSize();
-
-#if 0
-	auto bg = Sprite::create("Map.png");
-	bg->setAnchorPoint(Vec2(0, 0));
-	bg->setPosition(Vec2(-0.5*bg->getContentSize().width + Director::getInstance()->getVisibleSize().width*0.5, -0.5*bg->getContentSize().height + Director::getInstance()->getVisibleSize().height*0.5));
-	bg->setTag(1);
-	bg->setName("Map");
-	this->addChild(bg, -1);
-#endif
-
-	auto bgl = BackgroundLayer::create();
-	//bgl->setAnchorPoint(0);
-	this->addChild(bgl,-1,"bgl");
-	
-	auto bg = bgl->getChildByName("Map");
-
-	screenO = (Vec2(0.5*bg->getContentSize().width - Director::getInstance()->getVisibleSize().width*0.5, 0.5*bg->getContentSize().height - Director::getInstance()->getVisibleSize().height*0.5));
-
-#if 1
-	auto playerl = PlayerLayer::create();
-	this->addChild(playerl);
-	playerl->setName("playerl");
-	auto sprite = playerl->getChildByTag(10);
-	//sprite->setTag(1);
-#endif
-#if 0
+    
     //first sprite in game start page
-
+    auto screenSize = Director::getInstance()->getVisibleSize();
     auto sprite = Sprite::create("HelloWorld.png");
     sprite->setPosition(Vec2(40, screenSize.height / 2));
     sprite->setScale(0.3);
     this->addChild(sprite);
     sprite->setTag(1);
-
-#endif
    
     auto audioengine = CocosDenshion::SimpleAudioEngine::getInstance();
     audioengine->preloadBackgroundMusic("bgmusic.mp3");
@@ -84,33 +44,25 @@ bool GameStartPage::init() {
 	testMonster->setPosition(Vec2(screenSize.width / 2, screenSize.height / 2));
 	testMonster->setScale(0.1);
 	testMonster->setTag(2);
-	__String* nameCC = __String::createWithFormat("Monster_%d", 1);
-	std::string a = nameCC->getCString();
-
 	testMonster->setName("Monster_1");
-	bgl->addChild(testMonster);
-
+	this->addChild(testMonster);
 	auto testMonster2 = Sprite::create("demon.png");
-	//testMonster->setAnchorPoint(Vec2(0, 0));
 	testMonster2->setPosition(Vec2(screenSize.width / 2+40, screenSize.height / 2));
 	testMonster2->setScale(0.1);
 	testMonster2->setTag(2);
 	testMonster2->setName("Monster_2");
-	bgl->addChild(testMonster2);
+	this->addChild(testMonster2);
 #endif
+
 	//initialize collision list
-	
-	//create a keyboard listener to move the object.
-	auto eventListener = EventListenerKeyboard::create();
-	schedule(schedule_selector(GameStartPage::fire), 0.5);
-	schedule(schedule_selector(GameStartPage::fire), 0.5);
-	schedule(schedule_selector(GameStartPage::fire), 0.5);
-	schedule(schedule_selector(GameStartPage::fire), 0.5);
 
     //create a keyboard listener to move the object.
-    
-    
-    
+    auto eventListener = EventListenerKeyboard::create();
+	schedule(schedule_selector(GameStartPage::fire), 0.5);
+	schedule(schedule_selector(GameStartPage::fire), 0.5);
+	schedule(schedule_selector(GameStartPage::fire), 0.5);
+	schedule(schedule_selector(GameStartPage::fire), 0.5);
+ 
     //here is implementation of keyboard scene from game from scratch
     Director::getInstance()->getOpenGLView()->setIMEKeyboardState(true);
     eventListener->onKeyPressed = [=](EventKeyboard::KeyCode keyCode, Event* event) {
@@ -128,12 +80,12 @@ bool GameStartPage::init() {
     this->_eventDispatcher->addEventListenerWithSceneGraphPriority(eventListener, this);
     
 
-	initCL();
+
     // Let cocos know we have an update function to be called.
     // No worries, ill cover this in more detail later on
     this->scheduleUpdate();
     
-    
+	initCL();
     return true;
 }
 
@@ -152,7 +104,7 @@ double GameStartPage::keyPressedDuration(EventKeyboard::KeyCode code) {
     // Return the amount of time that has elapsed between now and when the user
     // first started holding down the key in milliseconds
     // Obviously the start time is the value we hold in our std::map keys
-    return std::chrono::duration_cast<std::chrono::seconds>
+    return std::chrono::duration_cast<std::chrono::milliseconds>
     (std::chrono::high_resolution_clock::now() - keys[code]).count();
 }
 
@@ -170,39 +122,27 @@ std::map<cocos2d::EventKeyboard::KeyCode, std::chrono::high_resolution_clock::ti
 
 void GameStartPage::keyEvent(float delta) {
 	auto screenSize2 = Director::getInstance()->getVisibleSize();
-	auto sprite = this->getChildByName("playerl")->getChildByTag(10);
-	auto map = this->getChildByName("bgl");
-	int speed = maincharacter.get_speed();
-	//auto testMonster = this->getChildByTag(2);
-	//    auto sprite2 = this ->getChildByTag(2);
-	//auto weaponSprite = this->getChildByTag(2);
-	auto cpm = map->getChildByName("Map")->convertToNodeSpace(sprite->getPosition());
+	auto sprite = this->getChildByTag(1);
+	//use the speed of the character, which can be changed later by buffs
+	int speed = maincharacter.get_speed() * 2;
+
+	//get the position of the sprite
 	auto cp = sprite->getPosition();
 	auto playerP = sprite->getPosition();
 	auto playerS = sprite->getContentSize();
 	int pwith = sprite->getScale()*playerS.width;
 	int pheig = playerS.height*sprite->getScale();
-	//log("pwidth %d", pwith);
-	//log("pheight %d", pheig);
-	/*auto monsterP = testMonster->getPosition();
-	auto monsterS = testMonster->getContentSize();
-	int mwith = testMonster->getScale()*monsterS.width;
-	int mheig = monsterS.height*testMonster->getScale();*/
-	//log("mwidth %d", mwith);
-	//log("mheight %d", mheig);
-	auto remove = RemoveSelf::create();
 
 	if (isKeyPressed(EventKeyboard::KeyCode::KEY_A)
-		){//&& sprite->getPositionX() >= sprite->getContentSize().height*sprite->getScale()*0.5) {
-		cpm = map->getChildByName("Map")->convertToNodeSpaceAR(sprite->getPosition());
+		&& sprite->getPositionX() >= 0) {
 		cp = sprite->getPosition();
 		updateCL();
 		PandS hitted = cheakCL(cp.x - delta* speed, cp.y, pwith, pheig);
 		if (hitted.height > 0 && hitted.width > 0)//, monsterP.x, monsterP.y, mwith, mheig))
 		{
-			auto hittedSprite = this->getChildByName("bgl")->getChildByName(hitted.name);
+			auto hittedSprite = this->getChildByName(hitted.name);
 			log("no");
-			
+			auto remove = RemoveSelf::create();
 			hittedSprite->runAction(remove);
 			auto monsterP = hittedSprite->getPosition();
 			auto monsterS = hittedSprite->getContentSize();
@@ -221,42 +161,25 @@ void GameStartPage::keyEvent(float delta) {
 				}
 				else { ; }
 		}
-
 		else
-		{
-			if (cpm.x - screenO.x > screenSize2.width / 4 )
-			{
-				//sprite->setPosition(Vec2(cp.x - delta * speed, cp.y));
-				sprite->setPositionX(cp.x - delta* speed);
-				log("yes");
-			}
-			else
-			{
-				//sprite->setPosition(Vec2(cp.x - delta * speed, cp.y));
-				map->setPosition(Vec2(map->getPosition().x + delta * speed, map->getPosition().y));
-				screenO.x -= delta * speed;
-			}
-		}
-			//sprite->setPositionX(cp.x - delta* speed);
+			sprite->setPositionX(cp.x - delta* speed);
 	}
 	if (isKeyPressed(EventKeyboard::KeyCode::KEY_D)
-		){//&& sprite->getPositionX() <= screenSize2.width) {
-		cpm = map->getChildByName("Map")->convertToNodeSpaceAR(sprite->getPosition());
+		&& sprite->getPositionX() <= screenSize2.width) {
 		cp = sprite->getPosition();
 		updateCL();
 		PandS hitted = cheakCL(cp.x + delta* speed, cp.y, pwith, pheig);
-		if (hitted.height > 0 && hitted.width > 0)//, monsterP.x, monsterP.y, mwith, mheig))
+		if (hitted.height > 0 && hitted.width > 0)
 		{
-			auto hittedSprite1 = this->getChildByName("bgl")->getChildByName(hitted.name);
-			//auto remove1 = RemoveSelf::create();
-			
+			auto hittedSprite = this->getChildByName(hitted.name);
 			log("no");
-			auto monsterP = hittedSprite1->getPosition();
-			auto monsterS = hittedSprite1->getContentSize();
-			int mwith = hittedSprite1->getScale()*monsterS.width;
-			int mheig = monsterS.height*hittedSprite1->getScale();
+			auto remove = RemoveSelf::create();
+			hittedSprite->runAction(remove);
+			auto monsterP = hittedSprite->getPosition();
+			auto monsterS = hittedSprite->getContentSize();
+			int mwith = hittedSprite->getScale()*monsterS.width;
+			int mheig = monsterS.height*hittedSprite->getScale();
 
-			hittedSprite1->runAction(remove);
 
 			if (cp.y > monsterP.y)
 				if (cp.y + 0.5*pheig > monsterP.y + 0.5*mheig) {
@@ -271,38 +194,23 @@ void GameStartPage::keyEvent(float delta) {
 				else { ; }
 		}
 		else
-		{
-			if (cpm.x - screenO.x < screenSize2.width / 4 * 3)
-			{
-				sprite->setPosition(Vec2(cp.x + delta * speed, cp.y));
-				log("yes");
-			}
-			else
-			{
-				//sprite->setPosition(Vec2(cp.x + delta * speed, cp.y));
-				map->setPosition(Vec2(map->getPosition().x - delta * speed, map->getPosition().y));
-				screenO.x += delta * speed;
-			}
-		}
-			//sprite->setPositionX(sprite->getPositionX() + delta * speed);
+			sprite->setPositionX(sprite->getPositionX() + delta * speed);
 	}
 	if (isKeyPressed(EventKeyboard::KeyCode::KEY_S)
-		){//&& sprite->getPositionY() >= sprite->getContentSize().height*sprite->getScale()*0.5) {
-		cpm = map->getChildByName("Map")->convertToNodeSpaceAR(sprite->getPosition());
+		&& sprite->getPositionY() >= 0) {
 		cp = sprite->getPosition();
 		updateCL();
 		PandS hitted = cheakCL(cp.x , cp.y - delta* speed, pwith, pheig);
 		if (hitted.height > 0 && hitted.width > 0)//, monsterP.x, monsterP.y, mwith, mheig))
 		{
-			auto hittedSprite = this->getChildByName("bgl")->getChildByName(hitted.name);
-			//auto remove = RemoveSelf::create();
-			//hittedSprite->runAction(remove);
+			auto hittedSprite = this->getChildByName(hitted.name);
 			log("no");
+			auto remove = RemoveSelf::create();
+			hittedSprite->runAction(remove);
 			auto monsterP = hittedSprite->getPosition();
 			auto monsterS = hittedSprite->getContentSize();
 			int mwith = hittedSprite->getScale()*monsterS.width;
 			int mheig = monsterS.height*hittedSprite->getScale();
-			hittedSprite ->runAction(remove);
 
 			if (cp.x > monsterP.x)
 				if (cp.x + 0.5*pwith > monsterP.x + 0.5*mwith) {
@@ -317,38 +225,23 @@ void GameStartPage::keyEvent(float delta) {
 				else { ; }
 		}
 		else
-		{
-			if (cpm.y - screenO.y > screenSize2.height / 4 )
-			{
-				sprite->setPosition(Vec2(cp.x , cp.y - delta * speed));
-				log("yes");
-			}
-			else
-			{
-				//sprite->setPosition(Vec2(cp.x , cp.y - delta * speed));
-				map->setPosition(Vec2(map->getPosition().x , map->getPosition().y + delta * speed));
-				screenO.y -= delta * speed;
-			}
-		}
-			//sprite->setPositionY(sprite->getPositionY() - delta * speed);
+			sprite->setPositionY(sprite->getPositionY() - delta * speed);
 	}
 	if (isKeyPressed(EventKeyboard::KeyCode::KEY_W)
-		){//&& sprite->getPositionY() <= screenSize2.height) {
-		cpm = map->getChildByName("Map")->convertToNodeSpaceAR(sprite->getPosition());
+		&& sprite->getPositionY() <= screenSize2.height) {
 		cp = sprite->getPosition();
 		updateCL();
 		PandS hitted = cheakCL(cp.x , cp.y + delta* speed, pwith, pheig);
 		if (hitted.height > 0 && hitted.width > 0)//, monsterP.x, monsterP.y, mwith, mheig))
 		{
-			auto hittedSprite = this->getChildByName("bgl")->getChildByName(hitted.name);
-			//auto remove = RemoveSelf::create();
-			//hittedSprite->runAction(remove);
+			auto hittedSprite = this->getChildByName(hitted.name);
 			log("no");
+			auto remove = RemoveSelf::create();
+			hittedSprite->runAction(remove);
 			auto monsterP = hittedSprite->getPosition();
 			auto monsterS = hittedSprite->getContentSize();
 			int mwith = hittedSprite->getScale()*monsterS.width;
 			int mheig = monsterS.height*hittedSprite->getScale();
-			hittedSprite->runAction(remove);
 
 			if (cp.x > monsterP.x)
 				if (cp.x + 0.5*pwith > monsterP.x + 0.5*mwith) {
@@ -363,108 +256,16 @@ void GameStartPage::keyEvent(float delta) {
 				else { ; }
 		}
 		else
-			if (cpm.y - screenO.y < screenSize2.height *3/ 4)
-			{
-				sprite->setPosition(Vec2(cp.x, cp.y + delta * speed));
-				log("yes");
-			}
-			else
-			{
-				//sprite->setPosition(Vec2(cp.x, cp.y + delta * speed));
-				map->setPosition(Vec2(map->getPosition().x, map->getPosition().y - delta * speed));
-				screenO.y += delta * speed;
-			}
-			//sprite->setPositionY(sprite->getPositionY() + delta * speed);
+			sprite->setPositionY(sprite->getPositionY() + delta * speed);
 
 	}
 
+	
 }
-
-void GameStartPage::fire(float dt) {
-	auto sprite = this->getChildByName("playerl")->getChildByTag(10);
-
-	if (isKeyPressed(EventKeyboard::KeyCode::KEY_DOWN_ARROW)) {
-		auto bullet = Sprite::create("Bullet.png");
-		bullet->setScale(0.2);
-
-		//auto sprite = this->getChildByTag(1);
-
-		auto startPos = sprite->getPosition() - Point(0, sprite->getContentSize().height / 10);
-		auto endPos = startPos + Point(0, -500);
-
-		auto duration = (startPos.y - endPos.y) / 1000;
-
-		bullet->setPosition(startPos);
-
-		this->addChild(bullet);
-
-		auto fire = MoveTo::create(duration, endPos);
-		auto remove = RemoveSelf::create();
-		bullet->runAction(Sequence::create(fire, remove, NULL));
-	}
-	else if (isKeyPressed(EventKeyboard::KeyCode::KEY_UP_ARROW)) {
-		auto bullet = Sprite::create("Bullet.png");
-		bullet->setScale(0.2);
-
-		//auto sprite = this->getChildByTag(1);
-
-		auto startPos = sprite->getPosition() + Point(0, sprite->getContentSize().height / 10);
-		auto endPos = startPos + Point(0, 500);
-
-		auto duration = (endPos.y - startPos.y) / 1000;
-
-		bullet->setPosition(startPos);
-
-		this->addChild(bullet);
-
-		auto fire = MoveTo::create(duration, endPos);
-		auto remove = RemoveSelf::create();
-		bullet->runAction(Sequence::create(fire, remove, NULL));
-	}
-	else if (isKeyPressed(EventKeyboard::KeyCode::KEY_RIGHT_ARROW)) {
-		auto bullet = Sprite::create("Bullet.png");
-		bullet->setScale(0.2);
-
-		//auto sprite = this->getChildByTag(1);
-
-		auto startPos = sprite->getPosition() + Point(sprite->getContentSize().width / 10, 0);
-		auto endPos = startPos + Point(500, 0);
-
-		auto duration = (endPos.x - startPos.x) / 1000;
-
-		bullet->setPosition(startPos);
-
-		this->addChild(bullet);
-
-		auto fire = MoveTo::create(duration, endPos);
-		auto remove = RemoveSelf::create();
-		bullet->runAction(Sequence::create(fire, remove, NULL));
-	}
-	else if (isKeyPressed(EventKeyboard::KeyCode::KEY_LEFT_ARROW)) {
-		auto bullet = Sprite::create("Bullet.png");
-		bullet->setScale(0.2);
-
-		//auto sprite = this->getChildByTag(1);
-
-		auto startPos = sprite->getPosition() - Point(sprite->getContentSize().width / 10, 0);
-		auto endPos = startPos + Point(-500, 0);
-
-		auto duration = (startPos.x - endPos.x) / 1000;
-
-		bullet->setPosition(startPos);
-
-		this->addChild(bullet);
-
-		auto fire = MoveTo::create(duration, endPos);
-		auto remove = RemoveSelf::create();
-		bullet->runAction(Sequence::create(fire, remove, NULL));
-	}
-}
-
 
 void GameStartPage::initCL()
 {
-	Vector<Node*> childList = this->getChildByName("bgl")->getChildren();
+	Vector<Node*> childList = this->getChildren();
 
 	for (Node* i : childList)
 	{
@@ -507,7 +308,7 @@ void GameStartPage::initCL()
 void GameStartPage::updateCL()
 {
 	cl.changed.clear();
-	Vector<Node*> childList = this->getChildByName("bgl")->getChildren();
+	Vector<Node*> childList = this->getChildren();
 	for (Node* i : childList)
 	{
 		//if it is monster or box
@@ -523,6 +324,86 @@ void GameStartPage::updateCL()
 			//cl.changed.push_back
 			//cl.changed.
 		}
+	}
+}
+
+void GameStartPage::fire(float dt) {
+
+	if (isKeyPressed(EventKeyboard::KeyCode::KEY_DOWN_ARROW)) {
+		auto bullet = Sprite::create("Bullet.png");
+		bullet->setScale(0.2);
+
+		auto sprite = this->getChildByTag(1);
+
+		auto startPos = sprite->getPosition() - Point(0, sprite->getContentSize().height / 10);
+		auto endPos = startPos + Point(0, -500);
+
+		auto duration = (startPos.y - endPos.y) / 1000;
+
+		bullet->setPosition(startPos);
+
+		this->addChild(bullet);
+
+		auto fire = MoveTo::create(duration, endPos);
+		auto remove = RemoveSelf::create();
+		bullet->runAction(Sequence::create(fire, remove, NULL));
+	}
+	else if (isKeyPressed(EventKeyboard::KeyCode::KEY_UP_ARROW)) {
+		auto bullet = Sprite::create("Bullet.png");
+		bullet->setScale(0.2);
+
+		auto sprite = this->getChildByTag(1);
+
+		auto startPos = sprite->getPosition() + Point(0, sprite->getContentSize().height / 10);
+		auto endPos = startPos + Point(0, 500);
+
+		auto duration = (endPos.y - startPos.y) / 1000;
+
+		bullet->setPosition(startPos);
+
+		this->addChild(bullet);
+
+		auto fire = MoveTo::create(duration, endPos);
+		auto remove = RemoveSelf::create();
+		bullet->runAction(Sequence::create(fire, remove, NULL));
+	}
+	else if (isKeyPressed(EventKeyboard::KeyCode::KEY_RIGHT_ARROW)) {
+		auto bullet = Sprite::create("Bullet.png");
+		bullet->setScale(0.2);
+
+		auto sprite = this->getChildByTag(1);
+
+		auto startPos = sprite->getPosition() + Point(sprite->getContentSize().width / 10, 0);
+		auto endPos = startPos + Point(500, 0);
+
+		auto duration = (endPos.x - startPos.x) / 1000;
+
+		bullet->setPosition(startPos);
+
+		this->addChild(bullet);
+
+		auto fire = MoveTo::create(duration, endPos);
+		auto remove = RemoveSelf::create();
+		bullet->runAction(Sequence::create(fire, remove, NULL));
+	}
+	else if (isKeyPressed(EventKeyboard::KeyCode::KEY_LEFT_ARROW)) {
+		auto bullet = Sprite::create("Bullet.png");
+		bullet->setScale(0.2);
+
+		auto sprite = this->getChildByTag(1);
+
+		auto startPos = sprite->getPosition() - Point(sprite->getContentSize().width / 10, 0);
+		auto endPos = startPos + Point(-500, 0);
+
+		auto duration = (startPos.x - endPos.x) / 1000;
+
+		bullet->setPosition(startPos);
+
+		this->addChild(bullet);
+
+		auto fire = MoveTo::create(duration, endPos);
+		auto remove = RemoveSelf::create();
+		bullet->runAction(Sequence::create(fire, remove, NULL));
 	}
 }
 

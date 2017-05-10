@@ -3,7 +3,6 @@
 #include "SimpleAudioEngine.h"
 #include "CollisionTest.h"
 #include "TestStartPage.h"
-#include "PlayerLayer.h"
 
 USING_NS_CC;
 
@@ -21,6 +20,7 @@ Scene* HelloWorld::createScene()
     
     // 'layer' is an autorelease object
     auto layer = HelloWorld::create();
+
     // add layer as a child to scene
     scene->addChild(layer);
 
@@ -31,18 +31,16 @@ Scene* HelloWorld::createScene()
 // on "init" you need to initialize your instance
 bool HelloWorld::init()
 {
-		if (!Layer::init())//WithColor(ccc4(0,255,255,255)))
+		if (!LayerColor::initWithColor(ccc4(0,255,255,255)))
 		{
 			return false;
 		}
-		screenO = Director::getInstance()->getVisibleOrigin();
+		
 #if 0
-		//std::string file = "Map.tmx";
-		//auto str = String::createWithContentsOfFile(FileUtils::getInstance()->fullPathForFilename(file.c_str()).c_str());
-		_tileMap = TMXTiledMap::create("04.tmx");
-		//_tileMap->setAnchorPoint(0);
-		//_tileMap->setPosition(Vec2(40,40));
-		//_background = _tileMap->layerNamed("background");
+		std::string file = "04.tmx";
+		auto str = String::createWithContentsOfFile(FileUtils::getInstance()->fullPathForFilename(file.c_str()).c_str());
+		_tileMap = TMXTiledMap::createWithXML(str->getCString(), "");
+		_background = _tileMap->layerNamed("background");
 
 		addChild(_tileMap, -1);
 #endif
@@ -72,10 +70,9 @@ bool HelloWorld::init()
 		player->setPosition(ccp(0 + 40, screensize.height / 2));
 		player->setTag(1);
 
-		auto bg = Sprite::create("Map.png");
-		bg->setAnchorPoint(Vec2(0,0));
-		bg->setPosition(Vec2(0,0));
-		this->addChild(bg,-1);
+		auto bg = Sprite::create("testBG.png");
+		bg->setPosition(Vec2(screensize.width / 2, screensize.height / 2));
+		this->addChild(bg);
 
 		this->addChild(player);
 
@@ -91,26 +88,10 @@ bool HelloWorld::init()
 		this->addChild(menu);
 
 		//a set of action
-#if 0
-		CCCallFuncN* selfdefineaction = CCCallFuncN::create(CC_CALLBACK_1(HelloWorld::mydefine,this));
-		CCMoveTo* move = CCMoveTo::create(10, ccp(180, 40));
-		CCSequence* action = CCSequence::create(move, selfdefineaction, NULL);
-		player->runAction(action);
-#endif
+
 		
 		//touch
-#if 0
-		//this->setTouchEnabled(true);
-		auto touchListenerOne = EventListenerTouchOneByOne::create();
-		//touchListenerOne -> setSwallowTouches(true);
-		touchListenerOne -> onTouchBegan = CC_CALLBACK_2(HelloWorld::onTouchBegan, this);
-		touchListenerOne ->onTouchMoved = CC_CALLBACK_2(HelloWorld::onTouchMoved, this);
-		touchListenerOne ->onTouchEnded = CC_CALLBACK_2(HelloWorld::onTouchEnded, this);
-		
-		_eventDispatcher-> addEventListenerWithSceneGraphPriority(touchListenerOne, this);
 
-
-#endif
 #if 1
 		auto kblistener = EventListenerKeyboard::create();
 		kblistener->onKeyPressed = CC_CALLBACK_2(HelloWorld::onKeyPressed, this);
@@ -127,15 +108,6 @@ bool HelloWorld::init()
 		this->addChild(testMonster);
 
 
-#endif
-#if 0
-		auto playerl = PlayerLayer::create();
-		this->addChild(playerl);
-		playerl->setName("playerl");
-		auto sprite = playerl->getChildByTag(10);
-		//sprite->setTag(1);
-
-		//sprite->runAction(MoveTo::create(10, Vec2(500, 0)));
 #endif
 }
 
@@ -154,13 +126,7 @@ bool HelloWorld::isHold(EventKeyboard::KeyCode code)
 
 void HelloWorld::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *event)
 {
-
-	auto screensize = Director::getInstance()->getVisibleSize();
-	
-
 	auto player = this->getChildByTag(1);
-	//auto player = this->getChildByName("playerl")->getChildByTag(10);
-	
 	auto cp = player->getPosition();
 	auto testMonster = this->getChildByName("vampire");
 
@@ -177,7 +143,7 @@ void HelloWorld::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *event)
 	log("mwidth %d", mwith);
 	log("mheight %d", mheig);
 
-		const float d = 100;
+		const float d = 10;
 		hold = 1;
 		switch (keyCode)
 		{
@@ -185,19 +151,11 @@ void HelloWorld::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *event)
 			log("up");
 			//while (HelloWorld::isHold(EventKeyboard::KeyCode::KEY_UP_ARROW))
 			{
-				screensize = Director::getInstance()->getVisibleSize();
-
-				
-				//screenp = Director::getInstance()->convertToGL(screenp);
 				cp = player->getPosition();
 				log("cp x %f", cp.x);
 				log("cp y %f", cp.y);
-				log("bo x %f", this->getPosition().x);
-				log("bo y %f", this->getPosition().y);
-
-				
-
-
+				log("cm x %f", monsterP.x);
+				log("cm y %f", monsterP.y);
 				if (CollisionTest::isCollision(cp.x, cp.y + d, pwith, pheig, monsterP.x, monsterP.y, mwith,mheig))
 				{
 					log("no");
@@ -223,25 +181,14 @@ void HelloWorld::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *event)
 				}
 				else
 				{
-					if (cp.y - screenO.y < screensize.height / 4 * 3)
-					{
-						player->setPosition(Vec2(cp.x, cp.y + d));
-						log("yes");
-					}
-					else
-					{
-						player->setPosition(Vec2(cp.x, cp.y + d));
-						this->setPosition(Vec2(this->getPosition().x, this->getPosition().y - d));
-						screenO.y += d;
-					}
+					log("yes");
+					player->setPosition(Vec2(cp.x, cp.y + d));
 				}
 			}
 			break;
 		case cocos2d::EventKeyboard::KeyCode::KEY_DOWN_ARROW:
 			log("down");
 			cp = player->getPosition();
-			screensize = Director::getInstance()->getVisibleSize();
-			//screenp = Director::getInstance()->getVisibleOrigin();
 			if (CollisionTest::isCollision(cp.x, cp.y - d, pwith, pheig, monsterP.x, monsterP.y, mwith, mheig))
 			{
 				log("no");
@@ -258,24 +205,10 @@ void HelloWorld::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *event)
 					else { ; }
 			}
 			else
-			{
-				if (cp.y - screenO.y > screensize.height / 4 )
-				{
-					player->setPosition(Vec2(cp.x, cp.y - d));
-					log("yes");
-				}
-				else
-				{
-					player->setPosition(Vec2(cp.x, cp.y - d));
-					this->setPosition(Vec2(this->getPosition().x, this->getPosition().y + d));
-					screenO.y -= d;
-				}
-			}
+				player->setPosition(Vec2(cp.x, cp.y - d));
 			break;
 		case cocos2d::EventKeyboard::KeyCode::KEY_LEFT_ARROW:
 			log("down");
-			screensize = Director::getInstance()->getVisibleSize();
-			//screenp = Director::getInstance()->getVisibleOrigin();
 			cp = player->getPosition();
 			if (CollisionTest::isCollision(cp.x-d, cp.y, pwith, pheig, monsterP.x, monsterP.y, mwith, mheig))
 			{
@@ -293,24 +226,10 @@ void HelloWorld::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *event)
 						else { ; }
 			}
 			else
-			{
-				if (cp.x - screenO.x > screensize.width/ 4)
-				{
-					player->setPosition(Vec2(cp.x -d, cp.y));
-					log("yes");
-				}
-				else
-				{
-					player->setPosition(Vec2(cp.x - d, cp.y));
-					this->setPosition(Vec2(this->getPosition().x + d, this->getPosition().y));
-					screenO.x -= d;
-				}
-			}
+				player->setPosition(Vec2(cp.x - d, cp.y));
 			break;
 		case cocos2d::EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
 			log("down");
-			screensize = Director::getInstance()->getVisibleSize();
-			//screenp = Director::getInstance()->getVisibleOrigin();
 			cp = player->getPosition();
 			if (CollisionTest::isCollision(cp.x + d, cp.y, pwith, pheig, monsterP.x, monsterP.y, mwith, mheig))
 			{
@@ -328,19 +247,7 @@ void HelloWorld::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *event)
 					else { ; }
 			}
 			else
-			{
-				if (cp.x - screenO.x < screensize.width / 4*3)
-				{
-					player->setPosition(Vec2(cp.x+d, cp.y));
-					log("yes");
-				}
-				else
-				{
-					player->setPosition(Vec2(cp.x + d, cp.y));
-					this->setPosition(Vec2(this->getPosition().x - d, this->getPosition().y));
-					screenO.x += d;
-				}
-			}
+				player->setPosition(Vec2(cp.x + d, cp.y));
 			break;
 	
 
@@ -479,8 +386,6 @@ void HelloWorld::menuCloseCallback(Ref* pSender)
 
 }
 
-
-
 void HelloWorld::setViewPointCenter(Point position) {
 	auto winSize = Director::getInstance()->getWinSize();
 
@@ -498,5 +403,4 @@ void HelloWorld::setViewPointCenter(Point position) {
 }
 std::map<cocos2d::EventKeyboard::KeyCode, std::chrono::high_resolution_clock::time_point> HelloWorld::keys;
 #endif
-
 

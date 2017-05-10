@@ -3,21 +3,16 @@
 
 #include "cocos2d.h"
 #include "CollisionList.h"
-#include "character.h"
 //#include "SceneManager.h"
 
-class GameStartPage : public cocos2d::Layer
+class GameStartPage : public cocos2d::LayerColor
 {
 public:
 	CollisonList cl;
-	cocos2d::Point screenO;
-	character maincharacter;
-	//auto bg;
 //	Sprite* sprite;
 public:
 	//每一个场景关卡都会有一个碰撞列表
 	void initCL();
-	
 	//更新怪物碰撞列表
 	void updateCL();
 	//检查玩家和CL中的碰撞
@@ -34,9 +29,8 @@ public:
 	bool isKeyPressed(cocos2d::EventKeyboard::KeyCode);
 	double keyPressedDuration(cocos2d::EventKeyboard::KeyCode);
 
-
+	//GSceneManager* sceneManager;
 	void keyEvent(float delta);
-
 	void fire(float dt);
 
 private:
