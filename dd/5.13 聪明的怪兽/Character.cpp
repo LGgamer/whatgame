@@ -78,11 +78,11 @@ void character::HpDown(int point) {
     if ( basic_health >= point && godlike == false ) {
         injureTime = std::time(nullptr);
         basic_health = basic_health - point;
-        auto blink = Blink::create(3, 10);
+        auto blink = Blink::create(1.2f, 10);
         this->runAction(blink);
     }else if ( basic_health >= point && godlike == true ) {
         auto current_time = std::time(nullptr);
-        if ( current_time - injureTime >= 3.0 ) {
+        if ( current_time - injureTime >= 1.5 ) {
             basic_health = basic_health - point;
         }
     } 

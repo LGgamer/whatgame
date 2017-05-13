@@ -899,7 +899,8 @@ void GameStartPage::updateHP()
 	if (current_time - maincharacter->injureTime < 1.5) {
 		maincharacter->godlike = true;
 	}
-	else {
+	else
+	{
 		maincharacter->godlike = false;
 	}
 }
