@@ -4,6 +4,7 @@
 #include "CollisionTest.h"
 #include "TestStartPage.h"
 #include "PlayerLayer.h"
+#include "SettingPage.h"
 
 USING_NS_CC;
 
@@ -36,56 +37,30 @@ bool HelloWorld::init()
 			return false;
 		}
 		screenO = Director::getInstance()->getVisibleOrigin();
-#if 0
-		//std::string file = "Map.tmx";
-		//auto str = String::createWithContentsOfFile(FileUtils::getInstance()->fullPathForFilename(file.c_str()).c_str());
-		_tileMap = TMXTiledMap::create("04.tmx");
-		//_tileMap->setAnchorPoint(0);
-		//_tileMap->setPosition(Vec2(40,40));
-		//_background = _tileMap->layerNamed("background");
-
-		addChild(_tileMap, -1);
-#endif
-		/*
-		TMXObjectGroup *objects = _tileMap->getObjectGroup("Object-Player");
-		CCASSERT(NULL != objects, "'Object-Player' object group not found");
-
-		auto playerShowUpPoint = objects->getObject("PlayerShowUpPoint");
-		CCASSERT(!playerShowUpPoint.empty(), "PlayerShowUpPoint object not found");
-
-
-		int x = playerShowUpPoint["x"].asInt();
-		int y = playerShowUpPoint["y"].asInt();
-
-
-		_player = Sprite::create("wall.png");
-		_player->setPosition(x + _tileMap->getTileSize().width / 2, y + _tileMap->getTileSize().height / 2);
-		_player->setScale(0.5);
-
-
-		addChild(_player);
-		setViewPointCenter(_player->getPosition());*/
-
-		CCSize screensize = CCDirector::sharedDirector()->getVisibleSize();
+		auto screensize = Director::getInstance()->getVisibleSize();
 
 		auto player = CCSprite::create("testball.png");
 		player->setPosition(ccp(0 + 40, screensize.height / 2));
 		player->setTag(1);
-
-		auto bg = Sprite::create("Map.png");
-		bg->setAnchorPoint(Vec2(0,0));
-		bg->setPosition(Vec2(0,0));
-		this->addChild(bg,-1);
-
 		this->addChild(player);
 
-		auto item1 = MenuItemAtlasFont::create("100", "wall.png", 16, 24, '.');
+		auto bgtest = Sprite::create("bgtest.png");
+		bgtest->setPosition(Vec2(screensize.width / 2, screensize.height / 2));
+		bgtest->setTag(0);
+		this->addChild(bgtest, -1);
 
-		MenuItemFont::setFontName("Arial");
-		MenuItemFont::setFontSize(86);
+		SimpleAudioEngine::getInstance()->playBackgroundMusic("sound/background.mp3", true);
+
+		MenuItemFont::setFontName("Times New Roman");
+		MenuItemFont::setFontSize(60);
 		auto item2 = MenuItemFont::create("Start", CC_CALLBACK_1(HelloWorld::mydefine2,this));
-		auto menu = Menu::create(item1, item2, NULL);
-		menu->alignItemsVerticallyWithPadding(10);
+        auto closeItem = MenuItemFont::create("Close", CC_CALLBACK_1(HelloWorld::menuCloseCallback ,this));
+		auto setting = MenuItemFont::create("Setting", CC_CALLBACK_1(HelloWorld::goToSetting, this));
+		auto menu = Menu::create( item2,closeItem,setting, NULL);
+		//item2->setPosition(Vec2(screensize.width / 2, screensize.height / 2 + 100));
+		//closeItem->setPosition(Vec2(screensize.width / 2, screensize.height / 2 + 200));
+
+		menu->alignItemsVerticallyWithPadding(150);
 
 		//menu->setPosition(ccp(200, screensize.height / 2));
 		this->addChild(menu);
@@ -121,7 +96,7 @@ bool HelloWorld::init()
 #if 1
 		auto testMonster = Sprite::create("vampire.png");
 		//testMonster->setAnchorPoint(Vec2(0, 0));
-		testMonster->setPosition(Vec2(screensize.width / 2, screensize.height / 2));
+                testMonster->setPosition(Vec2(screensize.width / 2, screensize.height +1000));
 		testMonster->setScale(1);
 		testMonster->setName("vampire");
 		this->addChild(testMonster);
@@ -345,12 +320,6 @@ void HelloWorld::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *event)
 			break;
 	
 
-	//if (HelloWorld::isHold(EventKeyboard::KeyCode::KEY_UP_ARROW))
-	/*{
-		log('123');
-		cp = player->getPosition();
-		player->setPosition(Vec2(cp.x, cp.y + d));
-	}*/
 
 
 	}
@@ -364,7 +333,6 @@ void HelloWorld::onKeyReleased(EventKeyboard::KeyCode keyCode, Event *event)
 
 bool HelloWorld::onTouchBegan(CCTouch *pTouch, CCEvent *event)
 {
-	//CCTouch* touch = (CCTouch) pTouches -> anyObject();
 	CCSize screensize = CCDirector::sharedDirector()->getVisibleSize();
 	CCPoint locInView = pTouch->getLocationInView();
 	CCPoint loc = CCDirector::sharedDirector()->convertToGL(locInView);
@@ -398,7 +366,10 @@ void HelloWorld::mydefine(Ref* who)
 
 	//this->removeChild(sprite);
 }
-
+void HelloWorld::goToSetting(Ref* pSender) {
+	auto settingScene = SettingPage::createNewScene();
+	Director::getInstance()->pushScene(settingScene);
+}
 
 void HelloWorld::menuCloseCallback(Ref* pSender)
 {
