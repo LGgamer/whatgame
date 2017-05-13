@@ -19,12 +19,15 @@ public:
 	int get_experience();
 	int get_gold();
 	//int level_up();
-	int get_speed();
-	void HpDown(int point);
-	bool stillalive();
 	void attack_up(int points);
 	void speed_up(int points);
 
+	int get_speed();
+	void HpDown(int point);
+	void setHp(int point);
+	bool stillalive();
+	bool godlike = false;
+	time_t injureTime = 0;
 	double attack_coefficient, defence_coefficient, strength_coefficient, agility_coefficient;
 	double experience_coefficient, coins_coefficient, speed_coefficient;
 	double health_coefficient, gold_coefficient;
