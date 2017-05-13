@@ -172,43 +172,10 @@ bool GameStartPage::init() {
 	HpBar->setPercent(20);
 	this->addChild(HpBar);
 
-	//create a character
-	//auto character1 = character::create();
 
-
-	//Menu * mn = Menu::create(item1,  NULL);
-	//mn->alignItemsVertically();
-	//this->addChild(mn);
-
-
-	//create a keyboard listener to move the object.
 	auto eventListener = EventListenerKeyboard::create();
 
-	/*
-	eventListener->onKeyPressed = [](EventKeyboard::KeyCode keyCode, Event* event) {
-	Vec2 loc = event->getCurrentTarget()->getPosition();
-	switch (keyCode) {
-	case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
-	case EventKeyboard::KeyCode::KEY_A:
-	event->getCurrentTarget()->setPosition(loc.x -=10, loc.y);
-	break;
-	case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
-	case EventKeyboard::KeyCode::KEY_D:
-	event->getCurrentTarget()->setPosition(loc.x += 10, loc.y);
-	break;
-	case EventKeyboard::KeyCode::KEY_UP_ARROW:
-	case EventKeyboard::KeyCode::KEY_W:
-	event->getCurrentTarget()->setPosition(loc.x, loc.y += 10);
-	break;
-	case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
-	case EventKeyboard::KeyCode::KEY_S:
-	event->getCurrentTarget()->setPosition(loc.x, loc.y -= 10);
-	break;
-	};
-	};
-	this->_eventDispatcher->addEventListenerWithSceneGraphPriority
-	(eventListener, qqSprite);
-	*/
+	
 	label = cocos2d::Label::createWithSystemFont("Press the CTRL Key", "Arial", 32);
 	label->setPosition(this->getBoundingBox().getMidX(), this->getBoundingBox().getMidY());
 	//addChild(label);
