@@ -2,11 +2,12 @@
 #define CHARACTER_H
 
 #include<string>
+#include "cocos2d.h"
 
-
-class character
+class character : public cocos2d::Sprite
 {
 public:
+	static character* create(const std::string& filename);
 	character();
 	~character();
 	int get_current_health();
@@ -21,6 +22,8 @@ public:
 	int get_speed();
 	void HpDown(int point);
 	bool stillalive();
+	void attack_up(int points);
+	void speed_up(int points);
 
 	double attack_coefficient, defence_coefficient, strength_coefficient, agility_coefficient;
 	double experience_coefficient, coins_coefficient, speed_coefficient;

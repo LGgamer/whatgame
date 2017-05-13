@@ -17,6 +17,18 @@ character::character() {
 	attack_coefficient = defence_coefficient = speed_coefficient = health_coefficient = gold_coefficient = 1.0;
 }
 
+character* character::create(const std::string& filename)
+{
+	character *sprite = new (std::nothrow) character();
+	if (sprite && sprite->initWithFile(filename))
+	{
+		sprite->autorelease();
+		return sprite;
+	}
+	CC_SAFE_DELETE(sprite);
+	return nullptr;
+}
+
 character::~character() {
 
 }
@@ -75,4 +87,11 @@ bool character::stillalive() {
 	else {
 		return false;
 	}
+}
+void character::attack_up(int points) {
+	basic_attack = basic_attack + points;
+}
+
+void character::speed_up(int points) {
+	basic_speed = basic_speed + points;
 }

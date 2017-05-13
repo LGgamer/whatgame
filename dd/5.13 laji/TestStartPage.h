@@ -38,6 +38,9 @@ public:
 	//魂掉落
 	void dropSoul(Vec2 position);
 
+	//初始化墙
+	void initWall();
+
 	//初始化怪兽
 	void initMonster();
 	//初始化怪兽状态
