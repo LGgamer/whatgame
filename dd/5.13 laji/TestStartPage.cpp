@@ -886,14 +886,22 @@ void GameStartPage::updateMonster(float delta)
 	
 void GameStartPage::updateHP()
 {
+	auto maincharacter = dynamic_cast<character*>(this->getChildByTag(1));
 	auto screenSize = Director::getInstance()->getVisibleSize();
 	auto HpBar = cocos2d::ui::LoadingBar::create("hp.png");
 	HpBar->setPosition(Vec2(200, screenSize.height - 100));
-	int percent = maincharacter.get_current_health();
+	int percent = maincharacter->get_current_health();
 	auto remove = RemoveSelf::create();
 	HpBar->setPercent(percent);
-	this->getChildByName("HUD")->addChild(HpBar);
+	this->addChild(HpBar);
 	HpBar->runAction(remove);
+	auto current_time = time(nullptr);
+	if (current_time - maincharacter->injureTime < 1.5) {
+		maincharacter->godlike = true;
+	}
+	else {
+		maincharacter->godlike = false;
+	}
 }
 
 void GameStartPage::checkBullet()
