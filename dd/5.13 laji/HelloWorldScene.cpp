@@ -72,19 +72,16 @@ bool HelloWorld::init()
 		player->setPosition(ccp(0 + 40, screensize.height / 2));
 		player->setTag(1);
 
-		auto bg = Sprite::create("Map.png");
-		bg->setAnchorPoint(Vec2(0,0));
-		bg->setPosition(Vec2(0,0));
-		this->addChild(bg,-1);
 
 		this->addChild(player);
 
-		auto item1 = MenuItemAtlasFont::create("100", "wall.png", 16, 24, '.');
+                //auto item1 = MenuItemAtlasFont::create("100", "wall.png", 16, 24, '.');
 
 		MenuItemFont::setFontName("Arial");
 		MenuItemFont::setFontSize(86);
 		auto item2 = MenuItemFont::create("Start", CC_CALLBACK_1(HelloWorld::mydefine2,this));
-		auto menu = Menu::create(item1, item2, NULL);
+                auto closeItem = MenuItemFont::create("Close", CC_CALLBACK_1(HelloWorld::menuCloseCallback ,this));
+                auto menu = Menu::create( item2,closeItem, NULL);
 		menu->alignItemsVerticallyWithPadding(10);
 
 		//menu->setPosition(ccp(200, screensize.height / 2));
@@ -121,7 +118,7 @@ bool HelloWorld::init()
 #if 1
 		auto testMonster = Sprite::create("vampire.png");
 		//testMonster->setAnchorPoint(Vec2(0, 0));
-		testMonster->setPosition(Vec2(screensize.width / 2, screensize.height / 2));
+                testMonster->setPosition(Vec2(screensize.width / 2, screensize.height +1000));
 		testMonster->setScale(1);
 		testMonster->setName("vampire");
 		this->addChild(testMonster);
