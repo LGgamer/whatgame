@@ -77,7 +77,7 @@ bool HelloWorld::init()
 
                 //auto item1 = MenuItemAtlasFont::create("100", "wall.png", 16, 24, '.');
 
-		MenuItemFont::setFontName("Arial");
+                MenuItemFont::setFontName("Verdana-Italic");
 		MenuItemFont::setFontSize(86);
 		auto item2 = MenuItemFont::create("Start", CC_CALLBACK_1(HelloWorld::mydefine2,this));
                 auto closeItem = MenuItemFont::create("Close", CC_CALLBACK_1(HelloWorld::menuCloseCallback ,this));
