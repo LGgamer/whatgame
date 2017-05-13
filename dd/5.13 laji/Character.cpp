@@ -71,13 +71,23 @@ int character::get_gold() {
 }
 
 void character::HpDown(int point) {
-	if (basic_health >= point) {
-		basic_health = basic_health - point;
-	}
-	else {
-		basic_health = 0;
-		live = false;
-	}
+
+    if ( basic_health >= point && godlike == false ) {
+        injureTime = std::time(nullptr);
+        basic_health = basic_health - point;
+        auto blink = Blink::create(3, 10);
+        this->runAction(blink);
+    }else if ( basic_health >= point && godlike == true ) {
+        auto current_time = std::time(nullptr);
+        if ( current_time - injureTime >= 3.0 ) {
+            basic_health = basic_health - point;
+
+        }
+    } 
+    if ( basic_health <= point ){
+        basic_health = 0;
+        live = false;
+    }
 }
 
 bool character::stillalive() {
