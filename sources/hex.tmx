@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="hexagonal" renderorder="right-down" width="10" height="18" tilewidth="77" tileheight="132" hexsidelength="0" staggeraxis="y" staggerindex="odd" nextobjectid="1">
+ <tileset firstgid="1" name="Tileset_Hexagonal_PointyTop_60x52_60x80" tilewidth="60" tileheight="80" tilecount="12" columns="4">
+  <image source="../../../Tileset_Hexagonal_PointyTop_60x52_60x80.png" width="240" height="240"/>
+ </tileset>
+ <tileset firstgid="13" name="hex" tilewidth="78" tileheight="89" tilecount="1" columns="1">
+  <image source="../../../hex.png" width="79" height="91"/>
+ </tileset>
+ <layer name="块层 1" width="10" height="18">
+  <data encoding="base64" compression="zlib">
+   eJxjYEAARgbCgBENk6qODY8aRixqyDWPDYc56GoZ0NTyQjExamDqkN3Ci8c8dHMIuRFmHi8edchq8KkjxTxkPNQAABbGAXk=
+  </data>
+ </layer>
+</map>
