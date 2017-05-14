@@ -85,6 +85,18 @@ bool AppDelegate::applicationDidFinishLaunching() {
     director->runWithScene(scene);
 
 	SimpleAudioEngine::getInstance()->preloadBackgroundMusic("sound/background.mp3");
+	SimpleAudioEngine::getInstance()->preloadBackgroundMusic("sound/gamemenu.mp3");
+	SimpleAudioEngine::getInstance()->preloadBackgroundMusic("sound/firstPhase.mp3");
+	SimpleAudioEngine::getInstance()->preloadBackgroundMusic("sound/secondPhase.mp3");
+	SimpleAudioEngine::getInstance()->preloadBackgroundMusic("sound/finalPhase.mp3");
+
+	SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(0.1);
+	SimpleAudioEngine::getInstance()->preloadEffect("sound/on.wav");
+	SimpleAudioEngine::getInstance()->preloadEffect("sound/off.wav");
+	SimpleAudioEngine::getInstance()->preloadEffect("sound/firesound.wav");
+
+
+	SimpleAudioEngine::getInstance()->setEffectsVolume(0.2);
 
 
 

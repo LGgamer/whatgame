@@ -3,6 +3,7 @@
 #define SETTINGPAGE_H
 #include "cocos2d.h"
 #include "HelloWorldScene.h"
+#include "SimpleAudioEngine.h"
 
 class SettingPage :public cocos2d::Layer {
 public:

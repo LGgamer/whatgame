@@ -1,4 +1,4 @@
-#if 1
+﻿#if 1
 #include "HelloWorldScene.h"
 #include "SimpleAudioEngine.h"
 #include "CollisionTest.h"
@@ -39,53 +39,46 @@ bool HelloWorld::init()
 		screenO = Director::getInstance()->getVisibleOrigin();
 		auto screensize = Director::getInstance()->getVisibleSize();
 
+
 		auto player = CCSprite::create("testball.png");
 		player->setPosition(ccp(0 + 40, screensize.height / 2));
 		player->setTag(1);
-		this->addChild(player);
+		this->addChild(player,-2);
 
 		auto bgtest = Sprite::create("bgtest.png");
 		bgtest->setPosition(Vec2(screensize.width / 2, screensize.height / 2));
 		bgtest->setTag(0);
 		this->addChild(bgtest, -1);
 
-		SimpleAudioEngine::getInstance()->playBackgroundMusic("sound/background.mp3", true);
+		SimpleAudioEngine::getInstance()->playBackgroundMusic("sound/gamemenu.mp3", true);
 
-		MenuItemFont::setFontName("Times New Roman");
-		MenuItemFont::setFontSize(60);
-		auto item2 = MenuItemFont::create("Start", CC_CALLBACK_1(HelloWorld::mydefine2,this));
-        auto closeItem = MenuItemFont::create("Close", CC_CALLBACK_1(HelloWorld::menuCloseCallback ,this));
-		auto setting = MenuItemFont::create("Setting", CC_CALLBACK_1(HelloWorld::goToSetting, this));
-		auto menu = Menu::create( item2,closeItem,setting, NULL);
-		//item2->setPosition(Vec2(screensize.width / 2, screensize.height / 2 + 100));
-		//closeItem->setPosition(Vec2(screensize.width / 2, screensize.height / 2 + 200));
 
-		menu->alignItemsVerticallyWithPadding(150);
-		 
-		//menu->setPosition(ccp(200, screensize.height / 2));
+		Sprite* startSpriteNormal = Sprite::create("menu/startgamebutton.png");
+		startSpriteNormal->setScale(0.3);
+		Sprite* startSpriteSelected = Sprite::create("menu/startgamebutton2.png");
+		startSpriteSelected->setScale(0.3);
+		MenuItemSprite*startMenuItem = MenuItemSprite::create(startSpriteNormal,startSpriteSelected,CC_CALLBACK_1(HelloWorld::mydefine2, this));
+		startMenuItem->setPosition(Vec2(screensize.width/2+200, screensize.height/2 - 50));
+
+		Sprite* settingSpriteNormal = Sprite::create("menu/settingbutton1.png");
+		settingSpriteNormal->setScale(0.3);
+		Sprite* settingSpriteSelected = Sprite::create("menu/settingbutton1.png");
+		settingSpriteSelected->setScale(0.3);
+		MenuItemSprite*settingMenuItem = MenuItemSprite::create(settingSpriteNormal, settingSpriteSelected, CC_CALLBACK_1(HelloWorld::goToSetting, this));
+		settingMenuItem->setPosition(Vec2(screensize.width / 2+190, screensize.height / 2 - 120));
+
+		Sprite* closeSpriteNormal = Sprite::create("menu/closegamebutton1.png");
+		closeSpriteNormal->setScale(0.3);
+		Sprite* closeSpriteSelected = Sprite::create("menu/closegamebutton1.png");
+		closeSpriteSelected->setScale(0.3);
+		MenuItemSprite*closeMenuItem = MenuItemSprite::create(closeSpriteNormal, closeSpriteSelected, CC_CALLBACK_1(HelloWorld::menuCloseCallback, this));
+		closeMenuItem->setPosition(Vec2(screensize.width / 2+140, screensize.height / 2 - 220));
+		auto menu = Menu::create( startMenuItem,settingMenuItem,closeMenuItem, NULL);
+		menu->setPosition(Vec2(0, 0));
 		this->addChild(menu);
 
-		//a set of action
-#if 0
-		CCCallFuncN* selfdefineaction = CCCallFuncN::create(CC_CALLBACK_1(HelloWorld::mydefine,this));
-		CCMoveTo* move = CCMoveTo::create(10, ccp(180, 40));
-		CCSequence* action = CCSequence::create(move, selfdefineaction, NULL);
-		player->runAction(action);
-#endif
-		
-		//touch
-#if 0
-		//this->setTouchEnabled(true);
-		auto touchListenerOne = EventListenerTouchOneByOne::create();
-		//touchListenerOne -> setSwallowTouches(true);
-		touchListenerOne -> onTouchBegan = CC_CALLBACK_2(HelloWorld::onTouchBegan, this);
-		touchListenerOne ->onTouchMoved = CC_CALLBACK_2(HelloWorld::onTouchMoved, this);
-		touchListenerOne ->onTouchEnded = CC_CALLBACK_2(HelloWorld::onTouchEnded, this);
-		
-		_eventDispatcher-> addEventListenerWithSceneGraphPriority(touchListenerOne, this);
 
 
-#endif
 #if 1
 		auto kblistener = EventListenerKeyboard::create();
 		kblistener->onKeyPressed = CC_CALLBACK_2(HelloWorld::onKeyPressed, this);
@@ -351,7 +344,8 @@ bool HelloWorld::onTouchBegan(CCTouch *pTouch, CCEvent *event)
 
 void HelloWorld::mydefine2(Ref *sender)
 {
-
+	SimpleAudioEngine::getInstance()->setEffectsVolume(0.2);
+	SimpleAudioEngine::getInstance()->playEffect("sound/on.wav");
 	auto sc = GameStartPage::createNewScene();
 	Director::getInstance()->pushScene(sc);
 
@@ -368,6 +362,7 @@ void HelloWorld::mydefine(Ref* who)
 }
 void HelloWorld::goToSetting(Ref* pSender) {
 	auto settingScene = SettingPage::createNewScene();
+	SimpleAudioEngine::getInstance()->playEffect("sound/on.wav");
 	Director::getInstance()->pushScene(settingScene);
 }
 

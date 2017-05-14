@@ -13,41 +13,56 @@ bool SettingPage::init() {
 		return false;
 
 	auto screenSize = Director::getInstance()->getVisibleSize();
-	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+	auto origin = Director::getInstance()->getVisibleOrigin();
+
+	auto bgtest = Sprite::create("bgtest.png");
+	bgtest->setPosition(Vec2(screenSize.width / 2, screenSize.height / 2));
+	bgtest->setTag(0);
+	this->addChild(bgtest, -1);
 
 	auto SettingPrompt = Sprite::create("setting.png");
 	SettingPrompt->setPosition(Vec2(screenSize.width / 2, screenSize.height / 2 + 200));
 	SettingPrompt->setScale(0.1);
 	this->addChild(SettingPrompt);
 	
-	MenuItemFont::setFontName("Times New Roman");
-	MenuItemFont::setFontSize(60);
-	auto item2 = MenuItemFont::create("ok", CC_CALLBACK_1(SettingPage::goToStartPage, this));
+
+
+	Sprite* backSpriteNormal = Sprite::create("menu/backbutton.png");
+	backSpriteNormal->setScale(0.3);
+	Sprite* backSpriteSelected = Sprite::create("menu/backbutton.png");
+	backSpriteSelected->setScale(0.3);
+	MenuItemSprite*backMenuItem = MenuItemSprite::create(backSpriteNormal, backSpriteSelected, CC_CALLBACK_1(SettingPage::goToStartPage, this));
+	backMenuItem->setPosition(Vec2(screenSize.width/2+100, screenSize.height/2- 200));
+
 
 	auto soundOnMenuItem = MenuItemImage::create("menu/on.png", "menu/on.png");
 	auto soundOffMenuItem = MenuItemImage::create("menu/off.png", "menu/off.png");
-
+	
+	auto soundLable = Label::create("sound", "Time New Roman", 50);
+	soundLable->setPosition(Vec2(screenSize.width/2, screenSize.height/2 - 100));
+	soundLable->setColor(Color3B(255, 255, 255));
+	this->addChild(soundLable);
 	auto soundToggleMenuItem = MenuItemToggle::createWithCallback(CC_CALLBACK_1(SettingPage::menuSoundToggleCallback, this), soundOnMenuItem,soundOffMenuItem, NULL);
-	//soundToggleMenuItem->setPosition(Director::getInstance()->convertToGL(Vec2(818, 220)));
+	soundToggleMenuItem->setPosition(Vec2(screenSize.width/2+200,screenSize.height/2 - 100));
 	soundToggleMenuItem->setScale(0.1);
-	auto menu = Menu::create(soundToggleMenuItem,item2, NULL);
-
-	//menu->setPosition(Vec2::ZERO);
-	menu->alignItemsVerticallyWithPadding(50);
+	auto menu = Menu::create(soundToggleMenuItem, backMenuItem, NULL);
+	menu->setPosition(Vec2(0, 0));
 	this->addChild(menu);
 	return true;
 }
 
 void SettingPage::goToStartPage(Ref* pSender) {
-
+	SimpleAudioEngine::getInstance()->playEffect("sound/on.wav");
 	Director::getInstance()->popScene();
 }
 void SettingPage::menuSoundToggleCallback(Ref* pSender) {
 	auto soundToggleMenuItem = (MenuItemToggle*)pSender;
 	if (soundToggleMenuItem->getSelectedIndex() == 1) {
+		SimpleAudioEngine::getInstance()->playEffect("sound/off.wav");
 		SimpleAudioEngine::getInstance()->stopBackgroundMusic("sound/background.mp3");
 	}
 	else {
+		SimpleAudioEngine::getInstance()->playEffect("sound/on.wav");
 		SimpleAudioEngine::getInstance()->playBackgroundMusic("sound/background.mp3");
 	}
 }
