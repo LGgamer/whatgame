@@ -3,6 +3,8 @@
 #define __HELLOWORLD_SCENE_H__
 
 #include "cocos2d.h"
+#include "SimpleAudioEngine.h"
+using namespace CocosDenshion;
 /*CC_SYNTHESIZE_RETAIN(coco2d::CCTMXTiledMap*, _tilemap, Tilemap);
 CC_SYNTHESIZE_RETAIN(coco2d::CCTMXLayer*, _background, Background);
 */
@@ -27,6 +29,7 @@ public:
 
 	void mydefine(Ref* who);
 	void mydefine2(Ref *sender);
+	void goToSetting(Ref* pSender);
 	bool isHold(cocos2d::EventKeyboard::KeyCode code);
 	bool onTouchBegan(cocos2d::CCTouch *touch, cocos2d::CCEvent *event);
 	//Sprite* player;
