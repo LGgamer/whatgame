@@ -94,8 +94,8 @@ bool BossPage::init()
 #endif
 
 	auto audioengine = CocosDenshion::SimpleAudioEngine::getInstance();
-	audioengine->preloadBackgroundMusic("bgmusic.mp3");
-	audioengine->playBackgroundMusic("bgmusic.mp3");
+
+	audioengine->playBackgroundMusic("sound/finalPhase.mp3");
 
 
 	currentMonsterNum = 0;

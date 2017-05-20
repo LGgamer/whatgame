@@ -44,6 +44,7 @@ bool HelloWorld::init()
 
 		if (isEffect == true) {
 			SimpleAudioEngine::getInstance()->playBackgroundMusic("sound/gamemenu.mp3", true);
+			SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(0.5);
 		}
 
 
@@ -347,7 +348,9 @@ void HelloWorld::mydefine(Ref* who)
 }
 void HelloWorld::goToSetting(Ref* pSender) {
 	auto settingScene = SettingPage::createNewScene();
+	SimpleAudioEngine::getInstance()->setEffectsVolume(0.3);
 	SimpleAudioEngine::getInstance()->playEffect("sound/on.wav");
+	
 	Director::getInstance()->pushScene(settingScene);
 }
 

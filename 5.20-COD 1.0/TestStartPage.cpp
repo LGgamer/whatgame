@@ -882,7 +882,7 @@ void GameStartPage::updateHP()
 	auto maincharacter = dynamic_cast<character*>(this->getChildByTag(1));
 	auto screenSize = Director::getInstance()->getVisibleSize();
 	auto HpBar = cocos2d::ui::LoadingBar::create("hp.png");
-	HpBar->setPosition(Vec2(200, screenSize.height - 100));
+	HpBar->setPosition(Vec2(250, screenSize.height - 100));
 	int percent = (maincharacter->get_current_health() * 100) / MAXhealth;
 	auto remove = RemoveSelf::create();
 	HpBar->setPercent(percent);

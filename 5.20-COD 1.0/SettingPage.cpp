@@ -58,6 +58,8 @@ void SettingPage::menuSoundToggleCallback(Ref* pSender) {
 	auto soundToggleMenuItem = (MenuItemToggle*)pSender;
 	if (soundToggleMenuItem->getSelectedIndex() == 1) {
 		SimpleAudioEngine::getInstance()->playEffect("sound/off.wav");
+		SimpleAudioEngine::getInstance()->setEffectsVolume(0.3);
+
 		if (isEffect == true) {
 			SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
 		}
@@ -65,6 +67,8 @@ void SettingPage::menuSoundToggleCallback(Ref* pSender) {
 	}
 	else {
 		SimpleAudioEngine::getInstance()->playEffect("sound/on.wav");
+		SimpleAudioEngine::getInstance()->setEffectsVolume(0.3);
+
 		if (isEffect == false) {
 			SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
 		}

@@ -15,7 +15,7 @@ bool HUDLayer::init()
 	auto screenSize = Director::getInstance()->getVisibleSize();
 	//the health point bar
 	auto HpBackground = Sprite::create("hpbar.png");
-	HpBackground->setPosition(Vec2(200, screenSize.height - 100));
+	HpBackground->setPosition(Vec2(250, screenSize.height - 100));
 	HpBackground->setTag(4);
 	this->addChild(HpBackground);
 	//small map
